@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Orthoneo Architecture</title>
+<style>
+  @page { size: letter; margin: 0.85in 0.8in; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; color: #2A2A2A; font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+    font-size: 10.3pt; line-height: 1.55;
+  }
+  .doc-label {
+    font-size: 8.5pt; letter-spacing: 0.09em; text-transform: uppercase; color: #8C8C8C;
+    margin-bottom: 8px;
+  }
+  h1.doc-title { font-size: 21pt; color: #602053; margin: 0 0 16px 0; font-weight: 700; line-height: 1.25; }
+  hr.doc-rule { border: none; border-top: 2px solid #E5C55D; margin: 0 0 20px 0; }
+
+  .meta { margin-bottom: 28px; }
+  .meta-row { display: flex; gap: 10px; font-size: 9.7pt; margin-bottom: 5px; }
+  .meta-label {
+    width: 88px; flex: 0 0 88px; color: #8C8C8C; text-transform: uppercase;
+    letter-spacing: 0.05em; font-size: 8.3pt; padding-top: 2px;
+  }
+  .meta-value { color: #2A2A2A; }
+  .meta-value strong { font-weight: 700; }
+
+  h2.doc-h2 {
+    font-size: 13.5pt; color: #602053; margin: 26px 0 12px 0; font-weight: 700;
+    border-bottom: 1px solid #DDD3B0; padding-bottom: 7px; page-break-after: avoid;
+  }
+  h2.doc-h2:first-of-type { margin-top: 0; }
+  h3.doc-h3 { font-size: 11pt; color: #602053; margin: 16px 0 6px 0; font-weight: 700; page-break-after: avoid; }
+  p { margin: 0 0 10px 0; }
+  ul { margin: 0 0 12px 0; padding-left: 20px; }
+  li { margin-bottom: 6px; }
+
+  table.doc-table { width: 100%; border-collapse: collapse; margin: 8px 0 16px 0; font-size: 9.3pt; }
+  table.doc-table th {
+    background: #602053; color: #F8F4CB; text-align: left; padding: 8px 10px; font-weight: 600;
+  }
+  table.doc-table td { padding: 8px 10px; border-bottom: 1px solid #DDD3B0; vertical-align: top; }
+  table.doc-table tbody tr:nth-child(even) td { background: #FAF7E8; }
+
+  .flow-pair { display: flex; gap: 16px; margin: 10px 0 18px 0; }
+  .flow-col { flex: 1; min-width: 0; }
+  .flow-col-label {
+    font-size: 8.6pt; text-transform: uppercase; letter-spacing: 0.06em; color: #602053;
+    font-weight: 700; margin-bottom: 6px;
+  }
+  .code-block {
+    background: #3D0C15; color: #F8F4CB; border-left: 4px solid #E5C55D; padding: 12px 14px;
+    font-family: "Courier New", monospace; font-size: 8.6pt; white-space: pre; line-height: 1.65;
+    page-break-inside: avoid;
+  }
+
+  .gold-block {
+    background: #F8F4CB; border-left: 4px solid #E5C55D; padding: 14px 18px; margin: 10px 0 16px 0;
+  }
+  .gold-block p { margin: 0 0 8px 0; }
+  .gold-block p:last-child { margin-bottom: 0; }
+
+  .doc-footer {
+    margin-top: 34px; padding-top: 14px; border-top: 1px solid #DDD3B0;
+    font-size: 9pt; color: #7A7A7A; font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<div class="doc-label">Architecture Document</div>
+<h1 class="doc-title">Orthoneo: Custom WordPress CMS</h1>
+<hr class="doc-rule">
+
+<div class="meta">
+  <div class="meta-row"><div class="meta-label">Client</div><div class="meta-value"><strong>Orthoneo, an online distributor of Class I to III medical implants</strong></div></div>
+  <div class="meta-row"><div class="meta-label">Stack</div><div class="meta-value">WordPress, custom theme development, custom plugin development, Elementor, PHP, cPanel, VIPcontrol, VentraIP hosting</div></div>
+  <div class="meta-row"><div class="meta-label">Author</div><div class="meta-value">Akash Ramesh</div></div>
+  <div class="meta-row"><div class="meta-label">Status</div><div class="meta-value">Staging, not yet published</div></div>
+</div>
+
+<h2 class="doc-h2">1. System Overview</h2>
+<p>
+  This engagement replaced Orthoneo's existing VIPsites builder with a self hosted WordPress
+  CMS, built on a custom theme and a small set of custom plugins. The goal was not just a new
+  website, but a system the client's non technical staff could run independently after handover.
+</p>
+<p>
+  WordPress runs on the client's existing VentraIP Select Hosting Shared plan, so the migration
+  carried zero additional hosting cost. Staff manage all content through the WordPress admin
+  dashboard, with Elementor available for layout level changes within the boundaries the custom
+  theme sets.
+</p>
+
+<h2 class="doc-h2">2. High Level Architecture</h2>
+<h3 class="doc-h3">Component map</h3>
+<table class="doc-table">
+  <thead><tr><th>Layer</th><th>Component</th><th>Responsibility</th></tr></thead>
+  <tbody>
+    <tr><td>Hosting</td><td>VentraIP Shared Hosting</td><td>Server infrastructure, DNS, cPanel access</td></tr>
+    <tr><td>Platform</td><td>WordPress</td><td>CMS core, admin dashboard, content storage</td></tr>
+    <tr><td>Presentation</td><td>Custom Theme</td><td>Brand and layout structure, design constraints</td></tr>
+    <tr><td>Page building</td><td>Elementor</td><td>Staff level layout control within theme constraints</td></tr>
+    <tr><td>Extension</td><td>Custom Plugins</td><td>Product and content management features specific to the business</td></tr>
+  </tbody>
+</table>
+
+<h3 class="doc-h3">Staff and visitor flow</h3>
+<p>
+  The site has two distinct flows: staff managing content through the WordPress admin, and
+  visitors reading published pages. They share the same platform but never the same entry point.
+</p>
+<div class="flow-pair">
+  <div class="flow-col">
+    <div class="flow-col-label">Staff and admin flow</div>
+    <div class="code-block">Staff/Admin
+  |
+  v
+WordPress CMS
+  |
+  v
+Custom Theme
+  |
+  v
+Custom Plugins
+  |
+  v
+VentraIP Hosting
+(cPanel)</div>
+  </div>
+  <div class="flow-col">
+    <div class="flow-col-label">Visitor flow</div>
+    <div class="code-block">Visitor
+  |
+  v
+VentraIP Hosting
+  |
+  v
+WordPress
+  |
+  v
+Custom Theme
+  |
+  v
+Page</div>
+  </div>
+</div>
+
+<h2 class="doc-h2">3. Infrastructure Design</h2>
+<p>
+  WordPress was installed on the client's existing VentraIP Select Hosting Shared plan, the same
+  plan that previously ran VIPsites. This meant the migration carried zero additional hosting
+  cost, since no new hosting product or upgrade was required.
+</p>
+<p>
+  Hosting level configuration, including DNS records and server settings, was managed through
+  cPanel and VentraIP's VIPcontrol panel. Both were configured as part of the migration,
+  alongside the WordPress installation itself.
+</p>
+
+<h2 class="doc-h2">4. Theme Architecture</h2>
+<p>
+  The custom theme defines the brand and layout structure: colours, typography, header and
+  footer structure, and the templates for each content type the business uses. These are the
+  boundaries staff do not change day to day, which keeps the site visually consistent as content
+  is added or updated.
+</p>
+<p>
+  Elementor sits on top of the custom theme as the page builder layer. Staff can use it to
+  rearrange sections, adjust layout, and build new pages within the constraints the theme sets,
+  without needing to edit any theme code directly.
+</p>
+
+<h2 class="doc-h2">5. Plugin Architecture</h2>
+<p>
+  The custom plugins handle the specific product and content management features the business
+  needed, the kind of functionality a generic theme or a page builder alone does not provide.
+  Building this as a plugin set, rather than as functions bundled into the theme, keeps the
+  functionality independent of the theme. It can survive a future theme change or update without
+  needing to be rebuilt.
+</p>
+<p>
+  Each plugin gives staff a straightforward admin interface for the content type it manages, so
+  day to day product and content updates do not require touching code or contacting a developer.
+</p>
+
+<h2 class="doc-h2">6. Content Management Model</h2>
+<p>
+  Staff manage day to day content, including product information and page text, directly through
+  the WordPress admin dashboard, using the interfaces the custom plugins provide.
+</p>
+<p>
+  Layout level changes, such as rearranging sections on a page, go through Elementor within the
+  constraints the custom theme sets.
+</p>
+<p>
+  Changes outside those boundaries, such as a new content type or a structural template change,
+  still require developer involvement. That boundary was scoped deliberately during handover, so
+  staff know what they can change directly and what needs to come back to a developer.
+</p>
+
+<h2 class="doc-h2">7. Security Design</h2>
+<table class="doc-table">
+  <thead><tr><th>Concern</th><th>Approach</th><th>Where enforced</th></tr></thead>
+  <tbody>
+    <tr><td>Admin access</td><td>WordPress admin credentials, unique to authorised staff</td><td>WordPress</td></tr>
+    <tr><td>Hosting access</td><td>cPanel and VIPcontrol credentials held by the account owner</td><td>VentraIP hosting</td></tr>
+    <tr><td>Plugin updates</td><td>Custom plugins and WordPress core kept on a regular update cycle</td><td>WordPress, hosting</td></tr>
+    <tr><td>Theme integrity</td><td>Custom theme code kept separate from content, so content changes cannot affect site structure</td><td>Custom theme</td></tr>
+    <tr><td>Data backup</td><td>Hosting level backups through the VentraIP plan</td><td>VentraIP hosting</td></tr>
+  </tbody>
+</table>
+
+<h2 class="doc-h2">8. Next Phase Architecture</h2>
+<p>Retainer scoping is in progress for the next phase. Two integrations are planned:</p>
+<div class="gold-block">
+  <p>
+    HotDoc booking integration would connect the site to HotDoc's booking API, so patients and
+    referrers can book directly from the site rather than through a phone call. The integration
+    would sit alongside the existing custom plugin set, calling the HotDoc API with a scoped API
+    key rather than exposing any booking logic to the browser directly.
+  </p>
+  <p>
+    The AI powered FAQ chatbot would use the Claude API to answer common procurement and product
+    questions on the site. The chatbot would call the Claude API from the backend, with the API
+    key held server side, and would be scoped to the business's own product and policy content
+    rather than open ended conversation.
+  </p>
+</div>
+<p>Neither integration is live yet. Both are scoped for the next phase of the engagement.</p>
+
+<h2 class="doc-h2">9. My Contributions</h2>
+<p>As the sole developer on this engagement, my ownership covered:</p>
+<ul>
+  <li>Infrastructure assessment of the existing VIPsites setup and VentraIP hosting plan</li>
+  <li>DNS and hosting configuration through cPanel and VIPcontrol</li>
+  <li>WordPress installation</li>
+  <li>Custom theme development</li>
+  <li>Custom plugin development</li>
+  <li>Client handover and documentation for non technical staff</li>
+</ul>
+
+<div class="doc-footer">
+  Staging site available to view on request. Akash Ramesh is available to walk through
+  any aspect of this architecture in detail during interview or technical review.
+</div>
+
+</body>
+</html>

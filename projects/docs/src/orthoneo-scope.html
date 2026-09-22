@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Orthoneo Scope</title>
+<style>
+  @page { size: letter; margin: 0.85in 0.8in; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; color: #2A2A2A; font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+    font-size: 10.3pt; line-height: 1.55;
+  }
+  .doc-label {
+    font-size: 8.5pt; letter-spacing: 0.09em; text-transform: uppercase; color: #8C8C8C;
+    margin-bottom: 8px;
+  }
+  h1.doc-title { font-size: 21pt; color: #602053; margin: 0 0 16px 0; font-weight: 700; line-height: 1.25; }
+  hr.doc-rule { border: none; border-top: 2px solid #E5C55D; margin: 0 0 20px 0; }
+
+  .meta { margin-bottom: 28px; }
+  .meta-row { display: flex; gap: 10px; font-size: 9.7pt; margin-bottom: 5px; }
+  .meta-label {
+    width: 88px; flex: 0 0 88px; color: #8C8C8C; text-transform: uppercase;
+    letter-spacing: 0.05em; font-size: 8.3pt; padding-top: 2px;
+  }
+  .meta-value { color: #2A2A2A; }
+  .meta-value strong { font-weight: 700; }
+
+  h2.doc-h2 {
+    font-size: 13.5pt; color: #602053; margin: 26px 0 12px 0; font-weight: 700;
+    border-bottom: 1px solid #DDD3B0; padding-bottom: 7px; page-break-after: avoid;
+  }
+  h2.doc-h2:first-of-type { margin-top: 0; }
+  h3.doc-h3 { font-size: 11pt; color: #602053; margin: 16px 0 6px 0; font-weight: 700; page-break-after: avoid; }
+  p { margin: 0 0 10px 0; }
+  ul { margin: 0 0 12px 0; padding-left: 20px; }
+  li { margin-bottom: 6px; }
+
+  table.doc-table { width: 100%; border-collapse: collapse; margin: 8px 0 16px 0; font-size: 9.3pt; }
+  table.doc-table th {
+    background: #602053; color: #F8F4CB; text-align: left; padding: 8px 10px; font-weight: 600;
+  }
+  table.doc-table td { padding: 8px 10px; border-bottom: 1px solid #DDD3B0; vertical-align: top; }
+  table.doc-table tbody tr:nth-child(even) td { background: #FAF7E8; }
+
+  .gold-block {
+    background: #F8F4CB; border-left: 4px solid #E5C55D; padding: 14px 18px; margin: 10px 0 16px 0;
+  }
+  .gold-block ul { margin: 0; padding-left: 20px; }
+  .gold-block li { margin-bottom: 8px; }
+  .gold-block li:last-child { margin-bottom: 0; }
+
+  .doc-footer {
+    margin-top: 34px; padding-top: 14px; border-top: 1px solid #DDD3B0;
+    font-size: 9pt; color: #7A7A7A; font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<div class="doc-label">Project Scope Document</div>
+<h1 class="doc-title">Orthoneo: Custom WordPress CMS</h1>
+<hr class="doc-rule">
+
+<div class="meta">
+  <div class="meta-row"><div class="meta-label">Client</div><div class="meta-value"><strong>Orthoneo, an online distributor of Class I to III medical implants</strong></div></div>
+  <div class="meta-row"><div class="meta-label">Type</div><div class="meta-value">Freelance, direct client relationship, solo delivery</div></div>
+  <div class="meta-row"><div class="meta-label">My focus</div><div class="meta-value">Full engagement end to end, from infrastructure assessment through to theme build, plugin development, and client handover</div></div>
+  <div class="meta-row"><div class="meta-label">Status</div><div class="meta-value">Staging, not yet published</div></div>
+  <div class="meta-row"><div class="meta-label">Stack</div><div class="meta-value">WordPress, custom theme development, custom plugin development, Elementor, PHP, cPanel, VIPcontrol, VentraIP hosting</div></div>
+  <div class="meta-row"><div class="meta-label">Source</div><div class="meta-value">Staging site, available to view on request</div></div>
+</div>
+
+<h2 class="doc-h2">1. Overview</h2>
+<p>
+  Orthoneo's existing site ran on VIPsites, a basic drag and drop builder bundled with their
+  VentraIP hosting plan. It could hold static pages but had no real content management model, no
+  advanced forms, and no path to the features the business needed next. This engagement assessed
+  that constraint and migrated the business to a self hosted WordPress CMS that their non
+  technical staff could run day to day.
+</p>
+<p>
+  The business sells medical implants to hospital and clinical procurement stakeholders, so the
+  site needed to read credible and professional to that audience while staying simple enough for
+  internal staff with no development background to update directly.
+</p>
+
+<h2 class="doc-h2">2. Problem Statement</h2>
+<p>
+  VIPsites is a basic drag and drop builder bundled free with VentraIP hosting plans. It could
+  hold static pages, but it had no real content management model behind it, no support for
+  advanced forms, and no reasonable path toward the features the business needed as it grew.
+  Every content change beyond simple text edits meant waiting on a developer.
+</p>
+<p>
+  The business needed two things that pulled in different directions: a site that read as
+  credible and professional to hospital and clinical procurement stakeholders, and a system
+  simple enough for non technical staff to run without filing a request for every update.
+  Meeting both meant moving off VIPsites entirely, to a platform with a real content management
+  layer and a design built specifically around the client's day to day workflow.
+</p>
+
+<h2 class="doc-h2">3. In Scope</h2>
+<ul>
+  <li>Infrastructure migration: DNS configuration and hosting setup through cPanel and VIPcontrol on the existing VentraIP plan</li>
+  <li>WordPress installation and setup</li>
+  <li>Custom theme development, built around the client's brand and content structure</li>
+  <li>Custom plugin development, giving staff direct control over product and content management</li>
+  <li>Elementor configured as the page builder layer for staff level layout control</li>
+  <li>Client handover documentation for non technical staff</li>
+</ul>
+
+<h2 class="doc-h2">4. Out of Scope</h2>
+<ul>
+  <li>E commerce or payment processing</li>
+  <li>Native mobile app</li>
+  <li>SEO campaign management</li>
+  <li>The planned next phase features: HotDoc booking integration, an AI powered FAQ chatbot, and Google Business Profile optimisation</li>
+</ul>
+
+<h2 class="doc-h2">5. Key Architecture Decisions</h2>
+<h3 class="doc-h3">WordPress over staying on VIPsites</h3>
+<p>
+  The existing VentraIP hosting plan could run WordPress natively, so the migration carried zero
+  additional hosting cost. VIPsites could not support the business's near term needs: more
+  sophisticated forms and a credible, polished presentation to hospital and clinical procurement
+  stakeholders. WordPress with Elementor as the page builder was recommended as the right level
+  of capability for the client's technical comfort and growth needs.
+</p>
+<h3 class="doc-h3">Custom theme and plugin set for non technical ownership</h3>
+<p>
+  The actual design goal was not just a WordPress site but a CMS the client could run
+  independently after handover. A custom theme and a small plugin set were built specifically so
+  staff with no development background could update product and content information themselves,
+  without filing a request to a developer for routine changes. That ownership boundary was the
+  central requirement.
+</p>
+<h3 class="doc-h3">End to end delivery including infrastructure</h3>
+<p>
+  The full migration path was owned personally: DNS configuration, hosting setup through cPanel
+  and VIPcontrol, WordPress installation, theme build, plugin development, and client handover
+  documentation. The client did not need to manage any of the technical migration steps
+  themselves.
+</p>
+<h3 class="doc-h3">Elementor as the page builder layer</h3>
+<p>
+  Elementor was chosen as the page builder layer on top of the custom theme so that staff could
+  make layout adjustments to pages without touching code. The custom theme sets the design
+  boundaries and brand constraints, and Elementor gives staff the flexibility to rearrange
+  content within those constraints.
+</p>
+
+<h2 class="doc-h2">6. Outcomes</h2>
+<div class="gold-block">
+  <ul>
+    <li>Staff can now manage all content directly, with no developer involvement required for routine updates</li>
+    <li>Migration carried zero additional hosting cost by running WordPress on the existing VentraIP plan</li>
+    <li>Site reads as credible and professional to hospital and clinical procurement stakeholders</li>
+    <li>Full handover completed with documentation for non technical staff</li>
+    <li>Retainer scoping in progress for next phase features, including HotDoc booking integration, an AI powered FAQ chatbot built on the Claude API, and Google Business Profile optimisation</li>
+  </ul>
+</div>
+
+<h2 class="doc-h2">7. Integration Footprint</h2>
+<table class="doc-table">
+  <thead><tr><th>Service</th><th>Role</th><th>Auth method</th></tr></thead>
+  <tbody>
+    <tr><td>VentraIP Hosting</td><td>Shared hosting, DNS, cPanel server management</td><td>cPanel credentials</td></tr>
+    <tr><td>WordPress</td><td>CMS, content management, admin dashboard</td><td>WordPress admin credentials</td></tr>
+    <tr><td>Elementor</td><td>Page builder layer for staff layout control</td><td>WordPress plugin</td></tr>
+    <tr><td>Custom Theme</td><td>Brand, design constraints, layout structure</td><td>Theme files, no external auth</td></tr>
+    <tr><td>Custom Plugins</td><td>Product and content management for staff</td><td>WordPress plugin, no external auth</td></tr>
+    <tr><td>HotDoc (planned)</td><td>Online booking integration, next phase</td><td>API key, not yet integrated</td></tr>
+    <tr><td>Claude API (planned)</td><td>AI powered FAQ chatbot, next phase</td><td>API key, not yet integrated</td></tr>
+  </tbody>
+</table>
+
+<h2 class="doc-h2">8. My Role</h2>
+<p>Sole delivery on this engagement, direct with the client, covering:</p>
+<ul>
+  <li>Infrastructure assessment of the existing VIPsites setup and VentraIP hosting plan</li>
+  <li>DNS and hosting configuration through cPanel and VIPcontrol</li>
+  <li>WordPress installation</li>
+  <li>Custom theme development</li>
+  <li>Custom plugin development</li>
+  <li>Client handover and documentation for non technical staff</li>
+</ul>
+
+<h2 class="doc-h2">9. What is Next</h2>
+<p>
+  Retainer scoping is in progress for a next phase of work, covering HotDoc booking integration
+  so patients and referrers can book directly from the site, an AI powered FAQ chatbot built on
+  the Claude API to handle common procurement and product questions, and Google Business Profile
+  optimisation to improve local search visibility.
+</p>
+
+<div class="doc-footer">
+  Staging site available to view on request. Akash Ramesh is available to walk through
+  implementation in detail during any interview or technical review.
+</div>
+
+</body>
+</html>

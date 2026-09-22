@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prosopo: Akash Ramesh</title>
+<meta name="description" content="An iOS app for creating, storing, and reusing AI personas as clean system prompts, built solo in SwiftUI with MVVM, SwiftData, Firebase, and a WidgetKit extension.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #3D0C15;
+    --bg-raised: #4E1622;
+    --text: #F8F4CB;
+    --text-muted: #C6A59B;
+    --border: #5E2836;
+    --accent: #E5C55D;
+    --accent-dim: #7A5A2A;
+    --plum: #602053;
+    --signal: #ACB41C;
+    --font-display: 'Space Grotesk', system-ui, sans-serif;
+    --font-body: 'IBM Plex Sans', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #3D0C15; --bg-raised: #4E1622; --text: #F8F4CB;
+      --text-muted: #C6A59B; --border: #5E2836; --accent: #E5C55D; --accent-dim: #7A5A2A;
+    }
+  }
+  /* Site is designed dark-first as a deliberate choice */
+  :root[data-theme="light"] {
+    --bg: #F8F4CB; --bg-raised: #FFFDF2; --text: #3D0C15;
+    --text-muted: #6B4A55; --border: #DDD3B0; --accent: #8A6410; --accent-dim: #602053;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---------- pin bar ---------- */
+  .pin-bar {
+    position: sticky; top: 0; z-index: 90;
+    background: color-mix(in srgb, var(--bg) 90%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .pin-inner {
+    max-width: 760px; margin: 0 auto; padding: 16px 24px;
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+  }
+  .pin-id { display: flex; flex-direction: column; line-height: 1.25; text-decoration: none; }
+  .pin-id .pname { font-family: var(--font-display); font-weight: 600; font-size: 0.98rem; color: var(--text); }
+  .pin-id .prole { font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent); }
+  .pin-back {
+    font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);
+    text-decoration: none; white-space: nowrap; border-bottom: 1px solid transparent; padding-bottom: 2px;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+  .pin-back:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* ---------- hero ---------- */
+  .hero {
+    padding: 72px 0 56px;
+    border-bottom: 1px solid var(--border);
+  }
+  .status {
+    display: inline-block; font-family: var(--font-mono); font-size: 0.7rem; color: var(--signal);
+    border: 1px solid color-mix(in srgb, var(--signal) 45%, transparent); padding: 2px 7px;
+    vertical-align: middle; margin-left: 12px;
+  }
+  h1.project-title {
+    font-family: var(--font-display); font-weight: 700; font-size: clamp(1.8rem, 5vw, 2.6rem);
+    line-height: 1.14; margin: 0 0 16px 0; letter-spacing: -0.01em;
+  }
+  .project-summary { font-size: 1.05rem; color: var(--text-muted); max-width: 62ch; margin: 0 0 24px 0; }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tags span {
+    font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted);
+    border: 1px solid var(--border); padding: 3px 8px;
+  }
+
+  /* ---------- generic section rhythm ---------- */
+  section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+  section:last-of-type { border-bottom: none; }
+  h2.sectitle { font-family: var(--font-display); font-weight: 600; font-size: 1.4rem; margin: 0 0 24px 0; }
+
+  /* ---------- what it is ---------- */
+  #summary p { max-width: 66ch; color: var(--text-muted); margin: 0 0 18px 0; }
+  #summary p:last-child { margin-bottom: 0; }
+
+  /* ---------- app flow / framed screenshots ---------- */
+  .section-intro { color: var(--text-muted); max-width: 66ch; margin: 0 0 24px 0; }
+  .framed-img {
+    display: block; width: 100%; max-width: 100%; height: auto;
+    border: 1px solid var(--border); background: var(--bg-raised); padding: 16px;
+  }
+
+  /* ---------- authentication ---------- */
+  #auth p { max-width: 66ch; color: var(--text-muted); margin: 0 0 16px 0; }
+  #auth h3.subhead {
+    font-family: var(--font-display); font-weight: 600; font-size: 1.1rem; color: var(--text);
+    margin: 32px 0 14px 0;
+  }
+  #auth p strong { color: var(--text); font-weight: 600; }
+  #auth .framed-img { margin-top: 28px; }
+
+  /* ---------- technical design ---------- */
+  #techdesign h3.subhead {
+    font-family: var(--font-display); font-weight: 600; font-size: 1.1rem; color: var(--text);
+    margin: 36px 0 14px 0;
+  }
+  #techdesign h3.subhead:first-of-type { margin-top: 0; }
+  #techdesign p { max-width: 66ch; color: var(--text-muted); margin: 0 0 16px 0; }
+  #techdesign .formula-block {
+    font-family: var(--font-mono); font-size: 0.85rem; color: var(--text);
+    background: var(--bg-raised); border: 1px solid var(--border); border-left: 2px solid var(--accent);
+    padding: 14px 18px; margin: 0 0 16px 0;
+  }
+  table.tone-table { width: 100%; border-collapse: collapse; margin: 0 0 20px 0; }
+  table.tone-table th {
+    font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent);
+    text-align: left; font-weight: 500; padding: 8px 12px; border-bottom: 1px solid var(--border);
+  }
+  table.tone-table td {
+    font-size: 0.88rem; color: var(--text-muted); padding: 10px 12px; border-bottom: 1px solid var(--border);
+  }
+  table.tone-table td:first-child { color: var(--text); font-family: var(--font-mono); }
+  table.tone-table tr:last-child td { border-bottom: none; }
+
+  /* ---------- architecture ---------- */
+  .arch-key { max-width: 66ch; color: var(--text-muted); margin: 24px 0 0 0; }
+  .arch-scroll {
+    overflow-x: auto; border: 1px solid var(--border); background: var(--bg-raised);
+    padding: 20px 16px;
+  }
+  .arch-svg { display: block; height: auto; }
+  .arch-svg text { font-family: 'IBM Plex Mono', monospace; font-size: 11px; fill: var(--text-muted); }
+  @media (prefers-reduced-motion: reduce) { .arch-svg animateMotion { display: none; } }
+
+  /* ---------- decisions ---------- */
+  .decision-card {
+    border: 1px solid var(--border); background: var(--bg-raised);
+    padding: 20px 22px; margin-bottom: 16px;
+  }
+  .decision-card:last-child { margin-bottom: 0; }
+  .decision-num { font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent); margin-bottom: 8px; }
+  .decision-card h3 { font-family: var(--font-display); font-size: 1.05rem; margin: 0 0 10px 0; font-weight: 600; }
+  .decision-card p { color: var(--text-muted); font-size: 0.94rem; margin: 0; }
+
+  /* ---------- outcomes ---------- */
+  .outcomes-block {
+    padding: 20px 22px; background: var(--bg-raised);
+    border: 1px solid var(--border); border-left: 2px solid var(--accent);
+  }
+  .outcomes-block ul { margin: 0; padding-left: 18px; color: var(--text); }
+  .outcomes-block li { margin-bottom: 10px; font-size: 0.95rem; }
+  .outcomes-block li:last-child { margin-bottom: 0; }
+
+  /* ---------- integration footprint ---------- */
+  .table-scroll { overflow-x: auto; }
+  table.footprint { width: 100%; border-collapse: collapse; min-width: 560px; }
+  table.footprint th {
+    font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent);
+    text-align: left; font-weight: 500; padding: 10px 14px; border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  table.footprint td {
+    font-size: 0.9rem; color: var(--text-muted); padding: 12px 14px; border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  table.footprint td:first-child { color: var(--text); font-family: var(--font-mono); font-size: 0.85rem; white-space: nowrap; }
+  table.footprint tr:last-child td { border-bottom: none; }
+
+  /* ---------- screenshot slider ---------- */
+  .slide-viewport { display: flex; align-items: center; gap: 12px; }
+  .slide-frame {
+    flex: 1; min-width: 0; background: var(--bg-raised); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center; padding: 12px;
+    touch-action: pan-y;
+  }
+  .slide-frame img { display: block; width: 100%; max-height: 520px; object-fit: contain; }
+  .slide-arrow {
+    flex: 0 0 auto; font-family: var(--font-mono); color: var(--text); border: 1px solid var(--border);
+    background: transparent; padding: 10px 18px; cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+  .slide-arrow:hover { border-color: #E5C55D; color: #E5C55D; }
+  .slide-counter {
+    font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted);
+    text-align: center; margin-top: 14px;
+  }
+  .slide-caption {
+    font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted);
+    text-align: center; margin: 6px auto 0; max-width: 56ch;
+  }
+
+  /* ---------- downloads ---------- */
+  .downloads-row { display: flex; flex-wrap: wrap; gap: 14px; }
+  .dl-btn {
+    font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent); background: none;
+    border: 1px solid var(--accent-dim); padding: 12px 18px; cursor: pointer; text-decoration: none;
+    transition: background 0.2s ease; display: inline-block;
+  }
+  .dl-btn:hover { background: var(--accent-dim); }
+
+  /* ---------- back to home ---------- */
+  .back-home { padding: 40px 0 56px; }
+  .back-home a {
+    font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted); text-decoration: none;
+    border-bottom: 1px solid var(--border); padding-bottom: 2px;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+  .back-home a:hover { color: var(--accent); border-color: var(--accent); }
+
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+</head>
+<body>
+
+<header class="pin-bar">
+  <div class="pin-inner">
+    <a href="../index.html" class="pin-id">
+      <span class="pname">Akash Ramesh</span>
+      <span class="prole">Full Stack Software Engineer</span>
+    </a>
+    <a href="../index.html" class="pin-back">&larr; Back to portfolio</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <h1 class="project-title">Prosopo: AI Persona Manager<span class="status">In progress</span></h1>
+    <p class="project-summary">Core app shipped, widget in progress. An iOS app for creating, storing, and reusing AI personas as clean system prompts, built solo in SwiftUI with MVVM, SwiftData, Firebase, and a WidgetKit extension.</p>
+    <div class="tags">
+      <span>Swift</span><span>SwiftUI</span><span>MVVM</span><span>SwiftData</span>
+      <span>Firebase Auth</span><span>Firestore</span><span>OpenAI API</span><span>WidgetKit</span><span>App Groups</span>
+    </div>
+  </div>
+</section>
+
+<section id="appflow">
+  <div class="wrap">
+    <h2 class="sectitle">App flow</h2>
+    <p class="section-intro">
+      The wireframe below maps the full navigation and interaction flow across all screens
+      before a single line of code was written.
+    </p>
+    <img class="framed-img" src="assets/prosopo/prosopo-app-flow.png" alt="Prosopo app flow wireframe showing navigation between all screens">
+  </div>
+</section>
+
+<section id="auth">
+  <div class="wrap">
+    <h2 class="sectitle">Authentication</h2>
+    <p>
+      The authentication screen is the first thing a user sees. Two sign in options are
+      presented: Sign in with Apple and Sign in with Google, both backed by Firebase Auth. The
+      screen is intentionally minimal with no email or password fields, no terms checkbox, and no
+      marketing copy. The user makes one decision and moves forward.
+    </p>
+
+    <h3 class="subhead">HIG Compliance and Design Considerations</h3>
+    <p>
+      This section documents how the authentication screen was designed to meet Apple Human
+      Interface Guideline requirements for apps that offer Sign in with Apple alongside third
+      party sign in options.
+    </p>
+    <p>
+      <strong>Button ordering:</strong> Apple requires that Sign in with Apple always appears
+      above any alternative sign in method when both are offered on the same screen. This is a
+      mandatory HIG requirement, not a suggestion. In Prosopo, Sign in with Apple is the first and
+      visually dominant button, with Sign in with Google appearing directly below it. Reversing
+      this order would result in App Store rejection.
+    </p>
+    <p>
+      <strong>Button style:</strong> The Sign in with Apple button uses the official black filled
+      style with the Apple logo glyph and the exact label text "Sign in with Apple". The HIG
+      specifies approved button styles (black filled, white filled, white with outline) and
+      prohibits custom colours, custom glyphs, or modified label text. Using
+      ASAuthorizationAppleIDButton from the AuthenticationServices framework ensures the button
+      renders to spec automatically and adapts to system appearance changes.
+    </p>
+    <p>
+      <strong>Touch target compliance:</strong> Both buttons span the full usable width of the
+      screen with generous vertical padding, well above the 44pt minimum touch target size
+      defined in the HIG. This is especially important on an authentication screen where a missed
+      tap before the user is inside the app creates an immediate negative first impression.
+    </p>
+    <p>
+      <strong>Privacy first design:</strong> Sign in with Apple allows users to hide their real
+      email address using a relay address. No email is stored or required by Prosopo at sign in.
+      The app requests the minimum necessary information (user identifier only) and stores
+      nothing beyond what Firebase Auth provides. This aligns with the HIG principle that apps
+      should request only the data they need, when they need it.
+    </p>
+    <p>
+      <strong>Visual hierarchy:</strong> The screen uses a single centred layout with the app name
+      above the buttons and nothing else. No background imagery, no decorative elements, no
+      secondary actions. This keeps the cognitive load at zero and makes the sign in action the
+      only available path forward, which is the correct pattern for a mandatory authentication
+      gate.
+    </p>
+
+    <img class="framed-img" src="assets/prosopo/prosopo-auth.png" alt="Prosopo authentication screen showing Sign in with Apple above Sign in with Google">
+  </div>
+</section>
+
+<section id="summary">
+  <div class="wrap">
+    <h2 class="sectitle">What it is</h2>
+    <p>
+      Prosopo lets users define reusable AI personas: a name, role, tone, and guardrails, and
+      turns them into clean, consistent system prompts they can drop into ChatGPT, Claude,
+      Gemini, or any other AI assistant. Rather than rewriting the same instructions every time,
+      users build a small library of personas and reuse them across conversations.
+    </p>
+    <p>
+      The app is built entirely solo in SwiftUI using MVVM architecture, with two tier local and
+      cloud persistence, Sign in with Apple and Google Sign In via Firebase Auth, and a WidgetKit
+      home screen widget for quick access to favourite personas.
+    </p>
+  </div>
+</section>
+
+<section id="techdesign">
+  <div class="wrap">
+    <h2 class="sectitle">Technical design</h2>
+
+    <h3 class="subhead">How temperature is calculated</h3>
+    <p>
+      Every persona in Prosopo has a computed temperature value that is sent to the OpenAI API on
+      every completion request. Temperature controls how deterministic or creative the model's
+      output is. A value of 0.0 makes the model almost entirely deterministic, producing the same
+      output for the same input every time. A value of 1.0 makes it highly variable and creative.
+      Most production use cases sit between 0.1 and 0.7.
+    </p>
+    <p>
+      Prosopo exposes two controls to the user: tone and a consistency slider. Neither surface the
+      raw temperature value directly. The final temperature is computed from both inputs using
+      this formula:
+    </p>
+    <div class="formula-block">final temperature = base temperature + (consistency - 0.5) x 0.4</div>
+    <p>The result is clamped to the range 0.0 to 1.0.</p>
+    <p>
+      The base temperature is looked up from a fixed map keyed on the persona tone the user
+      selected:
+    </p>
+    <table class="tone-table">
+      <thead><tr><th>Tone</th><th>Base</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Precise</td><td>0.1</td><td>Maximally deterministic, technical accuracy first</td></tr>
+        <tr><td>Concise</td><td>0.2</td><td>Tight and controlled, minimal variation</td></tr>
+        <tr><td>Assertive</td><td>0.3</td><td>Confident, low drift</td></tr>
+        <tr><td>Constructive</td><td>0.35</td><td>Balanced, slightly warmer than assertive</td></tr>
+        <tr><td>Supportive</td><td>0.5</td><td>Mid range, some natural variation in phrasing</td></tr>
+        <tr><td>Friendly</td><td>0.6</td><td>Conversational, more expressive</td></tr>
+      </tbody>
+    </table>
+    <p>
+      The consistency slider runs from 0 (labelled "Consistent") to 1 (labelled "Human-Like"). At
+      0.5 the slider contributes zero net change to the base temperature: (0.5 - 0.5) x 0.4 = 0.0.
+      Sliding toward 0 pulls the temperature down by up to 0.2, making the model more locked in.
+      Sliding toward 1 pushes it up by up to 0.2, introducing more human like variability in
+      phrasing and structure.
+    </p>
+    <p>
+      For example, a Precise persona at full consistency (slider at 1.0) computes: 0.1 + (1.0 -
+      0.5) x 0.4 = 0.1 + 0.2 = 0.3. A Friendly persona at minimum consistency (slider at 0.0)
+      computes: 0.6 + (0.0 - 0.5) x 0.4 = 0.6 - 0.2 = 0.4. The formula keeps the full range of any
+      tone within a 0.4 window, preventing any single slider position from producing extreme or
+      unpredictable behaviour.
+    </p>
+    <p>
+      This design decision keeps temperature as an implementation detail the user never has to
+      think about. A non technical user does not know what temperature 0.35 means. They do know
+      whether they want a precise assistant or a friendly one, and whether they want responses to
+      feel consistent or more human. The two controls map directly onto those intuitions and
+      translate them into the right model behaviour automatically.
+    </p>
+
+    <h3 class="subhead">Using an LLM to build LLM prompts</h3>
+    <p>
+      One feature in Prosopo lets a user describe a persona in plain language and have the app
+      fill in the form fields automatically. The user types something like "a firm but
+      encouraging personal trainer who keeps responses short" and the app generates a complete
+      persona from it.
+    </p>
+    <p>
+      The implementation sends that description to the OpenAI API with a structured system prompt
+      that instructs the model to return a strict JSON object matching the Persona schema: name,
+      role, tone (constrained to the six valid PersonaTone values), guardrails, and consistency as
+      a float between 0 and 1. The response is decoded directly into a Persona model. Malformed
+      values and out of range floats are caught and clamped rather than allowed to corrupt the
+      model state.
+    </p>
+    <p>
+      This pattern works well for two reasons. First, a language model is genuinely good at
+      inferring structure from vague intent. "Firm but encouraging" maps naturally to assertive or
+      constructive tone. "Keeps responses short" maps to concise. The model does not need to be
+      told the rules for each tone explicitly because it already has enough context from the tone
+      names and the description to make good inferences.
+    </p>
+    <p>
+      Second, the output is bounded. By specifying a closed enum of valid tone values in the
+      prompt and decoding into a typed Swift model, any response that does not fit the schema is
+      caught at the decode step. The model cannot return an invalid tone value and have it
+      silently accepted. This makes the LLM assisted creation flow as reliable as the manual one
+      for downstream use.
+    </p>
+    <p>
+      The result is that persona creation goes from a multi field form the user fills out manually
+      to a single text input. The user describes what they want in natural language, the model
+      interprets it, and a fully configured persona is ready to use in seconds.
+    </p>
+
+    <h3 class="subhead">Efficiency of the approach</h3>
+    <p>
+      Using an LLM to generate prompts that are then used to steer a second LLM call might seem
+      redundant but it is actually a meaningful efficiency gain for the user. Writing a good
+      system prompt from scratch requires knowing what makes a prompt effective: how to frame the
+      role, how to constrain tone, how to set guardrails. Most users do not know this. Prosopo
+      removes that requirement entirely.
+    </p>
+    <p>
+      The persona creation call is a one time cost per persona. Once the persona is saved to
+      Firestore, every subsequent conversation using it sends only the generated system prompt
+      plus the user message. There is no LLM call at the creation step if the user fills the form
+      manually, and the suggestion call is optional. Either path produces the same output: a
+      stored persona with a computed temperature that controls model behaviour on every use.
+    </p>
+    <p>
+      The architecture also means Prosopo is not locked to any single LLM provider. The persona
+      format (role, tone, guardrails, temperature) is provider agnostic. The app currently targets
+      OpenAI for generation and supports copying the prompt to ChatGPT, Gemini, or any other AI
+      assistant the user chooses. The prompt is the portable unit, not the provider.
+    </p>
+  </div>
+</section>
+
+<section id="architecture">
+  <div class="wrap">
+    <h2 class="sectitle">Architecture</h2>
+    <div class="arch-scroll">
+      <svg viewBox="0 0 940 150" class="arch-svg" width="940" height="150" role="img" aria-label="Request flow: User to SwiftUI App to SwiftData local to Firestore cloud to OpenAI API">
+        <line x1="100" y1="54" x2="820" y2="54" stroke="#5E2836" stroke-width="1.5"/>
+        <line x1="100" y1="54" x2="100" y2="92" stroke="#5E2836" stroke-width="1.5"/>
+        <rect x="25" y="92" width="150" height="34" fill="#3D0C15" stroke="#5E2836"/>
+        <text x="100" y="113" text-anchor="middle">User</text>
+
+        <line x1="280" y1="54" x2="280" y2="92" stroke="#5E2836" stroke-width="1.5"/>
+        <rect x="205" y="92" width="150" height="34" fill="#3D0C15" stroke="#5E2836"/>
+        <text x="280" y="113" text-anchor="middle">SwiftUI App</text>
+
+        <line x1="460" y1="54" x2="460" y2="92" stroke="#5E2836" stroke-width="1.5"/>
+        <rect x="385" y="92" width="150" height="34" fill="#3D0C15" stroke="#5E2836"/>
+        <text x="460" y="113" text-anchor="middle">SwiftData (local)</text>
+
+        <line x1="640" y1="54" x2="640" y2="92" stroke="#5E2836" stroke-width="1.5"/>
+        <rect x="565" y="92" width="150" height="34" fill="#3D0C15" stroke="#5E2836"/>
+        <text x="640" y="113" text-anchor="middle">Firestore (cloud)</text>
+
+        <line x1="820" y1="54" x2="820" y2="92" stroke="#5E2836" stroke-width="1.5"/>
+        <rect x="745" y="92" width="150" height="34" fill="#3D0C15" stroke="#5E2836"/>
+        <text x="820" y="113" text-anchor="middle">OpenAI API</text>
+
+        <path id="tp" d="M 100 54 L 820 54" fill="none"/>
+        <circle r="5" fill="#E5C55D"><animateMotion dur="5s" repeatCount="indefinite"><mpath href="#tp"/></animateMotion></circle>
+      </svg>
+    </div>
+    <p class="arch-key">
+      Persona drafts are saved locally in SwiftData so they survive app restarts before the user
+      commits. Finished personas sync to Firestore scoped per authenticated user. Favourites live
+      in App Group UserDefaults so the WidgetKit extension can read them without a network round
+      trip. The OpenAI API is called for persona suggestion, as structured JSON, and for prompt
+      generation.
+    </p>
+  </div>
+</section>
+
+<section id="decisions">
+  <div class="wrap">
+    <h2 class="sectitle">Decisions</h2>
+
+    <div class="decision-card">
+      <div class="decision-num">01</div>
+      <h3>Two tier persistence: SwiftData local and Firestore cloud</h3>
+      <p>
+        Drafts live locally in SwiftData so an in progress persona survives an app restart before
+        the user commits to it. Finished personas sync to Firestore, scoped per authenticated
+        user. This separation means the app is fully usable offline for persona management, and
+        cloud sync only happens on deliberate save actions.
+      </p>
+    </div>
+
+    <div class="decision-card">
+      <div class="decision-num">02</div>
+      <h3>Computing temperature from tone and a consistency slider</h3>
+      <p>
+        Each persona has a tone, precise, supportive, constructive, concise, assertive, or
+        friendly, each mapped to a base LLM temperature from 0.1 to 0.6. Rather than exposing raw
+        temperature to the user, the UI exposes a single consistency slider from 0 to 1. The
+        actual temperature sent to OpenAI is computed as the base value plus the consistency
+        offset from 0.5, scaled by 0.4, then clamped to the 0 to 1 range. This keeps the control
+        intuitive for non technical users while still giving fine grained influence over response
+        determinism.
+      </p>
+    </div>
+
+    <div class="decision-card">
+      <div class="decision-num">03</div>
+      <h3>Structured JSON output for persona suggestion</h3>
+      <p>
+        One feature lets a user describe a persona in plain language and have the app fill in the
+        form fields automatically. Rather than treating this as a simple chat completion, the
+        request instructs OpenAI to return strict JSON matching the persona schema, including a
+        closed set of valid tone values, which is decoded directly into a Persona model.
+        Malformed or out of range values are caught and clamped rather than allowed to corrupt
+        the model state.
+      </p>
+    </div>
+
+    <div class="decision-card">
+      <div class="decision-num">04</div>
+      <h3>App Group UserDefaults for WidgetKit favourites</h3>
+      <p>
+        Favourites are stored in shared App Group UserDefaults specifically so the WidgetKit
+        extension can read them without a network round trip. A widget that required a network
+        call on every timeline reload would be slow and battery inefficient. App Group storage
+        gives the widget instant read access to the same data the main app writes.
+      </p>
+    </div>
+
+    <div class="decision-card">
+      <div class="decision-num">05</div>
+      <h3>Gesture disambiguation on persona tiles</h3>
+      <p>
+        Persona tiles support four interactions on the same tap target: single tap to view,
+        double tap to edit, triple tap to delete with confirmation, and long press for a quick
+        action menu. The implementation debounces the single tap behind a cancellable
+        DispatchWorkItem and uses simultaneousGesture for the long press, so a double or triple
+        tap cancels the pending single tap action before it fires instead of running both
+        handlers.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section id="outcomes">
+  <div class="wrap">
+    <h2 class="sectitle">Outcomes</h2>
+    <div class="outcomes-block">
+      <ul>
+        <li>Core app shipped and fully functional: persona creation, editing, deletion, tone and consistency controls, structured AI suggestion, Firebase Auth with Sign in with Apple and Google Sign In</li>
+        <li>Two tier persistence working: SwiftData local drafts and Firestore cloud sync per user</li>
+        <li>WidgetKit extension built and working in local testing: reads favourite persona from App Group, copies prompt to clipboard via a prosopo:// deep link, timeline reloads on save</li>
+        <li>Full App Group entitlements blocked on Apple Developer Program enrolment, not available during coursework, so widget distribution is not yet complete</li>
+        <li>Unit tests covering add persona, edit persona, and home list view models</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="footprint">
+  <div class="wrap">
+    <h2 class="sectitle">Integration footprint</h2>
+    <div class="table-scroll">
+      <table class="footprint">
+        <thead>
+          <tr><th>Service</th><th>Role</th><th>Auth method</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Firebase Auth</td><td>Sign in with Apple and Google Sign In</td><td>Apple nonce + SHA256, Google Sign In SDK</td></tr>
+          <tr><td>Firestore</td><td>Cloud persistence for finished personas per user</td><td>Firebase Auth UID scoping</td></tr>
+          <tr><td>OpenAI API</td><td>Persona suggestion (structured JSON) and prompt generation</td><td>API key, server side in production</td></tr>
+          <tr><td>SwiftData</td><td>Local persistence for drafts</td><td>No external auth, on device only</td></tr>
+          <tr><td>WidgetKit</td><td>Home screen widget for quick persona access</td><td>App Group entitlement</td></tr>
+          <tr><td>App Groups</td><td>Shared UserDefaults between main app and widget</td><td>Provisioning profile entitlement</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="screenshots">
+  <div class="wrap">
+    <h2 class="sectitle">Screenshots</h2>
+    <div class="slide-viewport">
+      <button class="slide-arrow" id="slidePrev" aria-label="Previous screenshot">&#8249;</button>
+      <div class="slide-frame">
+        <img id="slideImg" src="" alt="">
+      </div>
+      <button class="slide-arrow" id="slideNext" aria-label="Next screenshot">&#8250;</button>
+    </div>
+    <div class="slide-counter" id="slideCounter"></div>
+    <div class="slide-caption" id="slideCaption"></div>
+  </div>
+</section>
+
+<section id="downloads">
+  <div class="wrap">
+    <h2 class="sectitle">Downloads</h2>
+    <div class="downloads-row">
+      <a href="docs/Prosopo_Scope.pdf" class="dl-btn" download>Download Scope Doc</a>
+      <a href="docs/Prosopo_Architecture.pdf" class="dl-btn" download>Download Architecture Doc</a>
+    </div>
+  </div>
+</section>
+
+<div class="back-home">
+  <div class="wrap">
+    <a href="../index.html">&larr; Back to home</a>
+  </div>
+</div>
+
+<script>
+(function () {
+  var slides = [
+    { src: 'assets/prosopo/prosopo-auth.png', alt: 'Prosopo sign in screen with Sign in with Apple and Sign in with Google', caption: 'Authentication screen: Sign in with Apple above Sign in with Google, HIG compliant ordering' },
+    { src: 'assets/prosopo/prosopo-home.png', alt: 'Prosopo home screen showing persona library list', caption: 'Home screen: persona library with hamburger menu and add button' },
+    { src: 'assets/prosopo/prosopo-create.png', alt: 'Prosopo create persona form', caption: 'Create persona: name, role, tone picker, guardrails, and consistency slider' },
+    { src: 'assets/prosopo/prosopo-suggest.png', alt: 'Prosopo suggest persona from description screen', caption: 'Suggest persona: plain language description generates a fully configured persona via OpenAI' },
+    { src: 'assets/prosopo/prosopo-detail.png', alt: 'Prosopo persona detail screen with copy and share actions', caption: 'Persona detail: copy prompt to ChatGPT, Gemini, or clipboard, plus native share' },
+    { src: 'assets/prosopo/prosopo-edit.png', alt: 'Prosopo edit persona screen', caption: 'Edit persona: full field editing with save and delete actions' },
+    { src: 'assets/prosopo/prosopo-delete.png', alt: 'Prosopo delete confirmation popover triggered by triple tap', caption: 'Delete confirmation: triple tap on a persona tile triggers this popover with an irreversible warning' },
+    { src: 'assets/prosopo/prosopo-favourite.png', alt: 'Prosopo long press quick action menu showing Copy Prompt and Set Favourite', caption: 'Long press quick action: copy the prompt directly or set as the widget favourite without opening the persona' },
+    { src: 'assets/prosopo/prosopo-share.png', alt: 'Prosopo native iOS share sheet', caption: 'Native share sheet: the system share sheet handles prompt export to any app' }
+  ];
+  var current = 0;
+  var img = document.getElementById('slideImg');
+  var counter = document.getElementById('slideCounter');
+  var caption = document.getElementById('slideCaption');
+  var prevBtn = document.getElementById('slidePrev');
+  var nextBtn = document.getElementById('slideNext');
+  var frame = document.querySelector('.slide-frame');
+
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+  function render() {
+    var s = slides[current];
+    img.src = s.src;
+    img.alt = s.alt;
+    counter.textContent = pad(current + 1) + ' / ' + pad(slides.length);
+    caption.textContent = s.caption;
+  }
+
+  function goTo(index) {
+    current = (index + slides.length) % slides.length;
+    render();
+  }
+
+  if (img && prevBtn && nextBtn) {
+    prevBtn.addEventListener('click', function () { goTo(current - 1); });
+    nextBtn.addEventListener('click', function () { goTo(current + 1); });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') goTo(current - 1);
+      if (e.key === 'ArrowRight') goTo(current + 1);
+    });
+
+    var touchStartX = null;
+    frame.addEventListener('touchstart', function (e) {
+      touchStartX = e.changedTouches[0].clientX;
+    }, { passive: true });
+    frame.addEventListener('touchend', function (e) {
+      if (touchStartX === null) return;
+      var deltaX = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(deltaX) > 40) {
+        if (deltaX < 0) goTo(current + 1);
+        else goTo(current - 1);
+      }
+      touchStartX = null;
+    }, { passive: true });
+
+    render();
+  }
+})();
+</script>
+
+</body>
+</html>

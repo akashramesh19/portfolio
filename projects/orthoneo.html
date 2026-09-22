@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orthoneo: Akash Ramesh</title>
+<meta name="description" content="End to end freelance migration from a no code builder to a self hosted WordPress CMS, built for non technical staff to run independently.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #3D0C15;
+    --bg-raised: #4E1622;
+    --text: #F8F4CB;
+    --text-muted: #C6A59B;
+    --border: #5E2836;
+    --accent: #E5C55D;
+    --accent-dim: #7A5A2A;
+    --plum: #602053;
+    --signal: #ACB41C;
+    --font-display: 'Space Grotesk', system-ui, sans-serif;
+    --font-body: 'IBM Plex Sans', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #3D0C15; --bg-raised: #4E1622; --text: #F8F4CB;
+      --text-muted: #C6A59B; --border: #5E2836; --accent: #E5C55D; --accent-dim: #7A5A2A;
+    }
+  }
+  /* Site is designed dark-first as a deliberate choice */
+  :root[data-theme="light"] {
+    --bg: #F8F4CB; --bg-raised: #FFFDF2; --text: #3D0C15;
+    --text-muted: #6B4A55; --border: #DDD3B0; --accent: #8A6410; --accent-dim: #602053;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---------- pin bar ---------- */
+  .pin-bar {
+    position: sticky; top: 0; z-index: 90;
+    background: color-mix(in srgb, var(--bg) 90%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .pin-inner {
+    max-width: 760px; margin: 0 auto; padding: 16px 24px;
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+  }
+  .pin-id { display: flex; flex-direction: column; line-height: 1.25; text-decoration: none; }
+  .pin-id .pname { font-family: var(--font-display); font-weight: 600; font-size: 0.98rem; color: var(--text); }
+  .pin-id .prole { font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent); }
+  .pin-back {
+    font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);
+    text-decoration: none; white-space: nowrap; border-bottom: 1px solid transparent; padding-bottom: 2px;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+  .pin-back:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* ---------- hero ---------- */
+  .hero {
+    padding: 72px 0 56px;
+    border-bottom: 1px solid var(--border);
+  }
+  .status {
+    display: inline-block; font-family: var(--font-mono); font-size: 0.7rem; color: var(--signal);
+    border: 1px solid color-mix(in srgb, var(--signal) 45%, transparent); padding: 2px 7px;
+    vertical-align: middle; margin-left: 12px;
+  }
+  h1.project-title {
+    font-family: var(--font-display); font-weight: 700; font-size: clamp(1.8rem, 5vw, 2.6rem);
+    line-height: 1.14; margin: 0 0 16px 0; letter-spacing: -0.01em;
+  }
+  .project-summary { font-size: 1.05rem; color: var(--text-muted); max-width: 62ch; margin: 0 0 24px 0; }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tags span {
+    font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted);
+    border: 1px solid var(--border); padding: 3px 8px;
+  }
+
+  /* ---------- generic section rhythm ---------- */
+  section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+  section:last-of-type { border-bottom: none; }
+  h2.sectitle { font-family: var(--font-display); font-weight: 600; font-size: 1.4rem; margin: 0 0 24px 0; }
+
+  /* ---------- what it is ---------- */
+  #summary p { max-width: 66ch; color: var(--text-muted); margin: 0 0 18px 0; }
+  #summary p:last-child { margin-bottom: 0; }
+
+  /* ---------- architecture ---------- */
+  .flow-label {
+    font-family: var(--font-mono); font-size: 0.78rem; color: var(--accent);
+    margin: 0 0 10px 0; letter-spacing: 0.02em;
+  }
+  .flow-label-next { margin-top: 28px; }
+  .arch-key { max-width: 66ch; color: var(--text-muted); margin: 24px 0 0 0; }
+  .arch-scroll {
+    overflow-x: auto; border: 1px solid var(--border); background: var(--bg-raised);
+    padding: 20px 16px;
+  }
+  .arch-svg { display: block; height: auto; }
+  .arch-svg text { font-family: 'IBM Plex Mono', monospace; font-size: 11px; fill: var(--text-muted); }
+  @media (prefers-reduced-motion: reduce) { .arch-svg animateMotion { display: none; } }
+
+  /* ---------- decisions ---------- */
+  .decision-card {
+    border: 1px solid var(--border); background: var(--bg-raised);
+    padding: 20px 22px; margin-bottom: 16px;
+  }
+  .decision-card:last-child { margin-bottom: 0; }
+  .decision-num { font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent); margin-bottom: 8px; }
+  .decision-card h3 { font-family: var(--font-display); font-size: 1.05rem; margin: 0 0 10px 0; font-weight: 600; }
+  .decision-card p { color: var(--text-muted); font-size: 0.94rem; margin: 0; }
+
+  /* ---------- outcomes ---------- */
+  .outcomes-block {
+    padding: 20px 22px; background: var(--bg-raised);
+    border: 1px solid var(--border); border-left: 2px solid var(--accent);
+  }
+  .outcomes-block ul { margin: 0; padding-left: 18px; color: var(--text); }
+  .outcomes-block li { margin-bottom: 10px; font-size: 0.95rem; }
+  .outcomes-block li:last-child { margin-bottom: 0; }
+
+  /* ---------- integration footprint ---------- */
+  .table-scroll { overflow-x: auto; }
+  table.footprint { width: 100%; border-collapse: collapse; min-width: 560px; }
+  table.footprint th {
+    font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent);
+    text-align: left; font-weight: 500; padding: 10px 14px; border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  table.footprint td {
+    font-size: 0.9rem; color: var(--text-muted); padding: 12px 14px; border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  table.footprint td:first-child { color: var(--text); font-family: var(--font-mono); font-size: 0.85rem; white-space: nowrap; }
+  table.footprint tr:last-child td { border-bottom: none; }
+
+  /* ---------- screenshots note (client project) ---------- */
+  .screenshots-note {
+    border: 1px solid var(--border); padding: 20px 24px; font-family: var(--font-mono);
+    font-size: 0.82rem; color: var(--text-muted); background: var(--bg-raised);
+  }
+  .screenshots-subnote { display: block; margin-top: 8px; font-size: 0.72rem; }
+
+  /* ---------- downloads ---------- */
+  .downloads-row { display: flex; flex-wrap: wrap; gap: 14px; }
+  .dl-btn {
+    font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent); background: none;
+    border: 1px solid var(--accent-dim); padding: 12px 18px; cursor: pointer; text-decoration: none;
+    transition: background 0.2s ease; display: inline-block;
+  }
+  .dl-btn:hover { background: var(--accent-dim); }
+
+  /* ---------- back to home ---------- */
+  .back-home { padding: 40px 0 56px; }
+  .back-home a {
+    font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted); text-decoration: none;
+    border-bottom: 1px solid var(--border); padding-bottom: 2px;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+  .back-home a:hover { color: var(--accent); border-color: var(--accent); }
+
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+</head>
+<body>
+
+<header class="pin-bar">
+  <div class="pin-inner">
+    <a href="../index.html" class="pin-id">
+      <span class="pname">Akash Ramesh</span>
+      <span class="prole">Full Stack Software Engineer</span>
+    </a>
+    <a href="../index.html" class="pin-back">&larr; Back to portfolio</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <h1 class="project-title">Orthoneo: Custom WordPress CMS<span class="status">Staging</span></h1>
+    <p class="project-summary">End to end freelance migration from a no code builder to a self hosted WordPress CMS, built for non technical staff to run independently.</p>
+    <div class="tags">
+      <span>WordPress</span><span>Custom Theme Development</span><span>Custom Plugin Development</span>
+      <span>Elementor</span><span>PHP</span><span>cPanel</span><span>VIPcontrol</span><span>VentraIP Hosting</span>
+    </div>
+  </div>
+</section>
+
+<section id="summary">
+  <div class="wrap">
+    <h2 class="sectitle">What it is</h2>
+    <p>
+      Orthoneo's existing site ran on VIPsites, a basic drag and drop builder bundled with their
+      VentraIP hosting plan. It could hold static pages but had no real content management
+      model, no advanced forms, and no path to the features the business needed next. I was
+      brought in to assess the constraint and migrate them to something their non technical
+      staff could run day to day.
+    </p>
+    <p>
+      The business sells medical implants to hospital and clinical procurement stakeholders. The
+      site needed to read credible and professional to that audience, while being simple enough
+      for internal staff with no development background to update without filing a request to a
+      developer.
+    </p>
+  </div>
+</section>
+
+<section id="architecture">
+  <div class="wrap">
+    <h2 class="sectitle">Architecture</h2>
+
+    <div class="flow-label">Staff and admin flow</div>
+    <div class="arch-scroll">
+      <svg viewBox="0 0 940 150" class="arch-svg" width="940" height="150" role="img" aria-label="Staff flow: Staff and Admin to WordPress CMS to Custom Theme to Custom Plugins to VentraIP Hosting with cPanel">
+        <line x1="100" y1="54" x2="820" y2="54" stroke="#5E2836" stroke-width="1.5"/>
+        <line x1="100" y1="54" x2="100" y2="92" stroke="#5E2836" stroke-width="1.5"/>
+        <rect x="25" y="92" width="150" height="34" fill="#3D0C15" stroke="#5E2836"/>
+        <text x="100" y="113" text-anchor="middle">Staff/Admin</text>
+
+        <line x1="280" y1="54" x2="280" y2="92" stroke="#5E2836" stroke-width="1.5"/>
+        <rect x="205" y="92" width="150" height="34" fill="#3D0C15" stroke="#5E2836"/>
+        <text x="280" y="113" text-anchor="middle">WordPress CMS</text>
+
+        <line x1="460" y1="54" x2="460" y2="92" stroke="#5E2836" stroke-width="1.5"/>
+        <rect x="385" y="92" width="150" height="34" fill="#3D0C15" stroke="#5E2836"/>
+        <text x="460" y="113" text-anchor="middle">Custom Theme</text>
+
+        <line x1="640" y1="54" x2="640" y2="92" stroke="#5E2836" stroke-width="1.5"/>
+        <rect x="565" y="92" width="150" height="34" fill="#3D0C15" stroke="#5E2836"/>
+        <text x="640" y="113" text-anchor="middle">Custom Plugins</text>
+
+        <line x1="820" y1="54" x2="820" y2="92" stroke="#5E2836" stroke-width="1.5"/>
+        <rect x="745" y="92" width="150" height="34" fill="#3D0C15" stroke="#5E2836"/>
+        <text x="820" y="113" text-anchor="middle">VentraIP (cPanel)</text>
+
+        <path id="tp1" d="M 100 54 L 820 54" fill="none"/>
+        <circle r="5" fill="#E5C55D"><animateMotion dur="5s" repeatCount="indefinite"><mpath href="#tp1"/></animateMotion></circle>
+      </svg>
+    </div>
+
+    <div class="flow-label flow-label-next">Visitor flow</div>
+    <div class="arch-scroll">
+      <svg viewBox="0 0 940 150" class="arch-svg" width="940" height="150" role="img" aria-label="Visitor flow: Visitor to VentraIP Hosting to WordPress to Custom Theme to Page">
+        <line x1="100" y1="54" x2="820" y2="54" stroke="#5E2836" stroke-width="1.5"/>
+        <line x1="100" y1="54" x2="100" y2="92" stroke="#5E2836" stroke-width="1.5"/>
+        <rect x="25" y="92" width="150" height="34" fill="#3D0C15" stroke="#5E2836"/>
+        <text x="100" y="113" text-anchor="middle">Visitor</text>
+
+        <line x1="280" y1="54" x2="280" y2="92" stroke="#5E2836" stroke-width="1.5"/>
+        <rect x="205" y="92" width="150" height="34" fill="#3D0C15" stroke="#5E2836"/>
+        <text x="280" y="113" text-anchor="middle">VentraIP Hosting</text>
+
+        <line x1="460" y1="54" x2="460" y2="92" stroke="#5E2836" stroke-width="1.5"/>
+        <rect x="385" y="92" width="150" height="34" fill="#3D0C15" stroke="#5E2836"/>
+        <text x="460" y="113" text-anchor="middle">WordPress</text>
+
+        <line x1="640" y1="54" x2="640" y2="92" stroke="#5E2836" stroke-width="1.5"/>
+        <rect x="565" y="92" width="150" height="34" fill="#3D0C15" stroke="#5E2836"/>
+        <text x="640" y="113" text-anchor="middle">Custom Theme</text>
+
+        <line x1="820" y1="54" x2="820" y2="92" stroke="#5E2836" stroke-width="1.5"/>
+        <rect x="745" y="92" width="150" height="34" fill="#3D0C15" stroke="#5E2836"/>
+        <text x="820" y="113" text-anchor="middle">Page</text>
+
+        <path id="tp2" d="M 100 54 L 820 54" fill="none"/>
+        <circle r="5" fill="#E5C55D"><animateMotion dur="5s" repeatCount="indefinite"><mpath href="#tp2"/></animateMotion></circle>
+      </svg>
+    </div>
+
+    <p class="arch-key">
+      WordPress runs on the existing VentraIP Select Hosting Shared plan, at zero additional
+      hosting cost. Staff manage all content through the WordPress admin dashboard. The custom
+      theme and plugin set give staff control over product and content updates without
+      developer involvement.
+    </p>
+  </div>
+</section>
+
+<section id="decisions">
+  <div class="wrap">
+    <h2 class="sectitle">Decisions</h2>
+
+    <div class="decision-card">
+      <div class="decision-num">01</div>
+      <h3>WordPress over staying on VIPsites</h3>
+      <p>
+        The existing VentraIP hosting plan could run WordPress natively, so the migration
+        carried zero additional hosting cost. VIPsites could not support the business's near
+        term needs: more sophisticated forms and a credible, polished presentation to hospital
+        and clinical procurement stakeholders. WordPress with Elementor as the page builder was
+        recommended as the right level of capability for the client's technical comfort and
+        growth needs.
+      </p>
+    </div>
+
+    <div class="decision-card">
+      <div class="decision-num">02</div>
+      <h3>Custom theme and plugin set for non technical ownership</h3>
+      <p>
+        The actual design goal was not just a WordPress site but a CMS the client could run
+        independently after handover. A custom theme and a small plugin set were built
+        specifically so staff with no development background could update product and content
+        information themselves, without filing a request to a developer for routine changes.
+        That ownership boundary was the central requirement.
+      </p>
+    </div>
+
+    <div class="decision-card">
+      <div class="decision-num">03</div>
+      <h3>End to end delivery including infrastructure</h3>
+      <p>
+        The full migration path was owned personally: DNS configuration, hosting setup through
+        cPanel and VIPcontrol, WordPress installation, theme build, plugin development, and
+        client handover documentation. The client did not need to manage any of the technical
+        migration steps themselves.
+      </p>
+    </div>
+
+    <div class="decision-card">
+      <div class="decision-num">04</div>
+      <h3>Elementor as the page builder layer</h3>
+      <p>
+        Elementor was chosen as the page builder layer on top of the custom theme so that staff
+        could make layout adjustments to pages without touching code. The custom theme sets the
+        design boundaries and brand constraints, and Elementor gives staff the flexibility to
+        rearrange content within those constraints.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section id="outcomes">
+  <div class="wrap">
+    <h2 class="sectitle">Outcomes</h2>
+    <div class="outcomes-block">
+      <ul>
+        <li>Staff can now manage all content directly, with no developer involvement required for routine updates</li>
+        <li>Migration carried zero additional hosting cost by running WordPress on the existing VentraIP plan</li>
+        <li>Site reads as credible and professional to hospital and clinical procurement stakeholders</li>
+        <li>Full handover completed with documentation for non technical staff</li>
+        <li>Retainer scoping in progress for next phase features, including HotDoc booking integration, an AI powered FAQ chatbot built on the Claude API, and Google Business Profile optimisation</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="footprint">
+  <div class="wrap">
+    <h2 class="sectitle">Integration footprint</h2>
+    <div class="table-scroll">
+      <table class="footprint">
+        <thead>
+          <tr><th>Service</th><th>Role</th><th>Auth method</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>VentraIP Hosting</td><td>Shared hosting, DNS, cPanel server management</td><td>cPanel credentials</td></tr>
+          <tr><td>WordPress</td><td>CMS, content management, admin dashboard</td><td>WordPress admin credentials</td></tr>
+          <tr><td>Elementor</td><td>Page builder layer for staff layout control</td><td>WordPress plugin</td></tr>
+          <tr><td>Custom Theme</td><td>Brand, design constraints, layout structure</td><td>Theme files, no external auth</td></tr>
+          <tr><td>Custom Plugins</td><td>Product and content management for staff</td><td>WordPress plugin, no external auth</td></tr>
+          <tr><td>HotDoc (planned)</td><td>Online booking integration, next phase</td><td>API key, not yet integrated</td></tr>
+          <tr><td>Claude API (planned)</td><td>AI powered FAQ chatbot, next phase</td><td>API key, not yet integrated</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="screenshots">
+  <div class="wrap">
+    <h2 class="sectitle">Screenshots</h2>
+    <div class="screenshots-note">
+      Screenshots available on request
+      <span class="screenshots-subnote">This is a client project. Visual assets are shared during interviews and technical reviews.</span>
+    </div>
+  </div>
+</section>
+
+<section id="downloads">
+  <div class="wrap">
+    <h2 class="sectitle">Downloads</h2>
+    <div class="downloads-row">
+      <a href="docs/Orthoneo_Scope.pdf" class="dl-btn" download>Download Scope Doc</a>
+      <a href="docs/Orthoneo_Architecture.pdf" class="dl-btn" download>Download Architecture Doc</a>
+    </div>
+  </div>
+</section>
+
+<div class="back-home">
+  <div class="wrap">
+    <a href="../index.html">&larr; Back to home</a>
+  </div>
+</div>
+
+</body>
+</html>

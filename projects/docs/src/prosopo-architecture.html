@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Prosopo Architecture</title>
+<style>
+  @page { size: letter; margin: 0.85in 0.8in; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; color: #2A2A2A; font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+    font-size: 10.3pt; line-height: 1.55;
+  }
+  .doc-label {
+    font-size: 8.5pt; letter-spacing: 0.09em; text-transform: uppercase; color: #8C8C8C;
+    margin-bottom: 8px;
+  }
+  h1.doc-title { font-size: 21pt; color: #602053; margin: 0 0 16px 0; font-weight: 700; line-height: 1.25; }
+  hr.doc-rule { border: none; border-top: 2px solid #E5C55D; margin: 0 0 20px 0; }
+
+  .meta { margin-bottom: 28px; }
+  .meta-row { display: flex; gap: 10px; font-size: 9.7pt; margin-bottom: 5px; }
+  .meta-label {
+    width: 88px; flex: 0 0 88px; color: #8C8C8C; text-transform: uppercase;
+    letter-spacing: 0.05em; font-size: 8.3pt; padding-top: 2px;
+  }
+  .meta-value { color: #2A2A2A; }
+  .meta-value strong { font-weight: 700; }
+
+  h2.doc-h2 {
+    font-size: 13.5pt; color: #602053; margin: 26px 0 12px 0; font-weight: 700;
+    border-bottom: 1px solid #DDD3B0; padding-bottom: 7px; page-break-after: avoid;
+  }
+  h2.doc-h2:first-of-type { margin-top: 0; }
+  h3.doc-h3 { font-size: 11pt; color: #602053; margin: 16px 0 6px 0; font-weight: 700; page-break-after: avoid; }
+  p { margin: 0 0 10px 0; }
+  ul { margin: 0 0 12px 0; padding-left: 20px; }
+  li { margin-bottom: 6px; }
+
+  table.doc-table { width: 100%; border-collapse: collapse; margin: 8px 0 16px 0; font-size: 9.3pt; }
+  table.doc-table th {
+    background: #602053; color: #F8F4CB; text-align: left; padding: 8px 10px; font-weight: 600;
+  }
+  table.doc-table td { padding: 8px 10px; border-bottom: 1px solid #DDD3B0; vertical-align: top; }
+  table.doc-table tbody tr:nth-child(even) td { background: #FAF7E8; }
+
+  .flow-pair { display: flex; gap: 16px; margin: 10px 0 18px 0; }
+  .flow-col { flex: 1; min-width: 0; }
+  .flow-col-label {
+    font-size: 8.6pt; text-transform: uppercase; letter-spacing: 0.06em; color: #602053;
+    font-weight: 700; margin-bottom: 6px;
+  }
+  .code-block {
+    background: #3D0C15; color: #F8F4CB; border-left: 4px solid #E5C55D; padding: 12px 14px;
+    font-family: "Courier New", monospace; font-size: 8.6pt; white-space: pre; line-height: 1.65;
+    page-break-inside: avoid;
+  }
+
+  .gold-block {
+    background: #F8F4CB; border-left: 4px solid #E5C55D; padding: 14px 18px; margin: 10px 0 16px 0;
+  }
+  .gold-block p { margin: 0 0 8px 0; }
+  .gold-block p:last-child { margin-bottom: 0; }
+
+  .doc-footer {
+    margin-top: 34px; padding-top: 14px; border-top: 1px solid #DDD3B0;
+    font-size: 9pt; color: #7A7A7A; font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<div class="doc-label">Architecture Document</div>
+<h1 class="doc-title">Prosopo: AI Persona Manager</h1>
+<hr class="doc-rule">
+
+<div class="meta">
+  <div class="meta-row"><div class="meta-label">Built for</div><div class="meta-value"><strong>RMIT iOS App Development coursework, built individually as a solo project</strong></div></div>
+  <div class="meta-row"><div class="meta-label">Stack</div><div class="meta-value">Swift, SwiftUI, MVVM, SwiftData, Firebase Auth, Firestore, OpenAI API, WidgetKit, App Groups</div></div>
+  <div class="meta-row"><div class="meta-label">Author</div><div class="meta-value">Akash Ramesh</div></div>
+  <div class="meta-row"><div class="meta-label">Status</div><div class="meta-value">Core app shipped, widget in progress</div></div>
+</div>
+
+<h2 class="doc-h2">1. System Overview</h2>
+<p>
+  Prosopo is a SwiftUI app built with MVVM architecture, using a two tier persistence model:
+  SwiftData for local drafts and Firestore for synced, finished personas, scoped per
+  authenticated user. Firebase Auth handles sign in through Sign in with Apple and Google Sign
+  In.
+</p>
+<p>
+  A WidgetKit extension reads favourite personas from shared App Group storage for home screen
+  quick access. The OpenAI API powers structured persona suggestion and prompt generation, with
+  responses decoded directly into the app's Persona model.
+</p>
+
+<h2 class="doc-h2">2. High Level Architecture</h2>
+<h3 class="doc-h3">Component map</h3>
+<table class="doc-table">
+  <thead><tr><th>Layer</th><th>Component</th><th>Responsibility</th></tr></thead>
+  <tbody>
+    <tr><td>UI</td><td>SwiftUI Views</td><td>Persona list, editor, suggestion flow, gesture handling</td></tr>
+    <tr><td>State</td><td>MVVM View Models</td><td>Business logic, temperature computation, persistence coordination</td></tr>
+    <tr><td>Local persistence</td><td>SwiftData</td><td>Draft personas, on device only</td></tr>
+    <tr><td>Cloud persistence</td><td>Firestore</td><td>Finished personas, scoped per Firebase Auth UID</td></tr>
+    <tr><td>Auth</td><td>Firebase Auth</td><td>Sign in with Apple, Google Sign In</td></tr>
+    <tr><td>AI</td><td>OpenAI API</td><td>Persona suggestion (structured JSON), prompt generation</td></tr>
+    <tr><td>Widget</td><td>WidgetKit, App Groups</td><td>Home screen favourite persona display and quick copy</td></tr>
+  </tbody>
+</table>
+
+<h3 class="doc-h3">Persona save and suggestion flows</h3>
+<div class="flow-pair">
+  <div class="flow-col">
+    <div class="flow-col-label">Persona save flow</div>
+    <div class="code-block">User
+  |
+  v
+SwiftUI App
+  |
+  v
+SwiftData
+(local draft)
+  |
+  v
+Firestore
+(on commit,
+ per user)</div>
+  </div>
+  <div class="flow-col">
+    <div class="flow-col-label">Persona suggestion flow</div>
+    <div class="code-block">User
+  |
+  v
+SwiftUI App
+  |
+  v
+OpenAI API
+(structured JSON)
+  |
+  v
+Persona model
+(decoded, clamped)</div>
+  </div>
+</div>
+
+<h3 class="doc-h3">Widget flow</h3>
+<div class="code-block">Main App
+  |
+  v
+App Group UserDefaults
+(shared, on device)
+  |
+  v
+WidgetKit Extension
+(home screen)</div>
+
+<h2 class="doc-h2">3. Persistence Architecture</h2>
+<p>
+  Persona data moves through two persistence layers. SwiftData holds drafts locally, on device,
+  so an in progress persona survives an app restart before the user commits to it. There is no
+  network dependency at this stage, and the app remains fully usable offline for creating and
+  editing personas.
+</p>
+<p>
+  Once a persona is finished and saved, it syncs to Firestore, scoped to the authenticated user's
+  UID. This is the point where cloud sync happens, deliberately, rather than on every keystroke
+  or field change. If the device is offline at save time, the write queues through Firestore's
+  own offline persistence and syncs once connectivity returns.
+</p>
+
+<h2 class="doc-h2">4. Authentication Design</h2>
+<p>
+  Sign in with Apple uses a nonce and SHA256 challenge: the app generates a random nonce, hashes
+  it with SHA256, and sends the hash to Apple as part of the authorization request. Apple returns
+  a signed credential that Firebase Auth verifies against the original nonce, which prevents
+  replay of a captured credential.
+</p>
+<p>
+  Google Sign In runs through the Google Sign In SDK, which returns an ID token that Firebase
+  Auth exchanges for a Firebase credential.
+</p>
+<p>
+  Both providers resolve to the same Firebase Auth user model. Firestore reads and writes are
+  scoped to that user's UID, so personas are isolated per account regardless of which provider
+  the user signed in with.
+</p>
+
+<h2 class="doc-h2">5. Persona Suggestion Pipeline</h2>
+<p>
+  A user can describe a persona in plain language, for example a blunt but fair code reviewer,
+  and have the app fill in the form fields automatically. That free text is sent to the OpenAI
+  API with a system prompt that instructs the model to return strict JSON matching the Persona
+  schema, including a closed set of valid tone values.
+</p>
+<p>
+  The response is decoded directly into a Persona model. Any field that falls outside the
+  expected range or tone set is caught during decoding and clamped to the nearest valid value,
+  rather than allowed to produce an invalid or corrupted Persona instance. This keeps the
+  suggestion feature from ever putting the app into a bad state, even if the model returns an
+  unexpected value.
+</p>
+
+<h2 class="doc-h2">6. Temperature Computation Model</h2>
+<p>
+  Each persona has one of six tones: precise, supportive, constructive, concise, assertive, or
+  friendly. Each tone maps to a base temperature between 0.1 and 0.6, with more deterministic
+  tones sitting toward the lower end of that range and more expressive tones sitting toward the
+  higher end.
+</p>
+<p>
+  Rather than exposing that raw temperature value to the user, the UI exposes a single
+  consistency slider from 0 to 1. The final temperature sent to OpenAI is computed as:
+</p>
+<div class="code-block">temperature = clamp(base + (consistency - 0.5) * 0.4, 0, 1)</div>
+<p>
+  A raw temperature value means little to a non technical user. The consistency slider gives the
+  same fine grained influence over response determinism through a single, intuitive control,
+  while the tone selection still does most of the work of setting the persona's baseline
+  behaviour.
+</p>
+
+<h2 class="doc-h2">7. WidgetKit Architecture</h2>
+<p>
+  Favourite personas are written to shared UserDefaults in an App Group container, accessible to
+  both the main app and the WidgetKit extension. When a favourite changes, the main app reloads
+  the widget's timeline, so the home screen widget picks up the change without waiting for its
+  next scheduled refresh.
+</p>
+<p>
+  Tapping the widget opens the app through a prosopo:// deep link, which copies the favourite
+  persona's prompt to the clipboard as part of the same interaction.
+</p>
+<p>
+  Reading from Firestore instead would mean a network call on every timeline reload, which is
+  slow and battery inefficient for something that should feel instant. App Group storage gives
+  the widget the same instant, offline read access that SwiftData gives the main app for drafts.
+</p>
+
+<h2 class="doc-h2">8. Gesture Handling Design</h2>
+<p>
+  Persona tiles support four interactions on the same tap target: a single tap opens the persona
+  for viewing, a double tap opens it for editing, a triple tap deletes it after confirmation, and
+  a long press opens a quick action menu.
+</p>
+<div class="gold-block">
+  <p>
+    The risk with stacking multiple tap gesture counts on one view is that a double or triple tap
+    also registers as a single tap on its way there. The implementation debounces the single tap
+    behind a cancellable DispatchWorkItem: the single tap action is scheduled after a short
+    delay, and a subsequent double or triple tap cancels that pending work item before it fires.
+  </p>
+  <p>
+    The long press is attached with simultaneousGesture, so it can be recognized independently of
+    the tap count gestures rather than competing with them.
+  </p>
+</div>
+
+<h2 class="doc-h2">9. Security Design</h2>
+<table class="doc-table">
+  <thead><tr><th>Concern</th><th>Approach</th><th>Where enforced</th></tr></thead>
+  <tbody>
+    <tr><td>User authentication</td><td>Firebase Auth via Sign in with Apple and Google Sign In</td><td>Firebase Auth</td></tr>
+    <tr><td>Replay protection</td><td>SHA256 hashed nonce challenge for Sign in with Apple</td><td>Sign in with Apple flow</td></tr>
+    <tr><td>Data isolation</td><td>Firestore reads and writes scoped to the authenticated user's UID</td><td>Firestore</td></tr>
+    <tr><td>API key handling</td><td>OpenAI API key held server side in production, not embedded in the client</td><td>Backend, build configuration</td></tr>
+    <tr><td>Local data</td><td>Draft personas stored in on device SwiftData only, no network exposure</td><td>SwiftData</td></tr>
+    <tr><td>Widget data</td><td>Favourites shared through an App Group entitlement scoped to this app's group only</td><td>App Groups, WidgetKit</td></tr>
+  </tbody>
+</table>
+
+<h2 class="doc-h2">10. My Contributions</h2>
+<p>As the sole developer on this project, my ownership covered:</p>
+<ul>
+  <li>Overall architecture and MVVM structure</li>
+  <li>SwiftUI implementation for every screen and interaction</li>
+  <li>Firebase integration: Sign in with Apple, Google Sign In, Firestore</li>
+  <li>OpenAI integration for persona suggestion and prompt generation</li>
+  <li>SwiftData and Firestore persistence design</li>
+  <li>WidgetKit extension, including App Group configuration</li>
+  <li>Unit tests for the add persona, edit persona, and home list view models</li>
+</ul>
+
+<div class="doc-footer">
+  Personal project, available to walk through on request. Akash Ramesh is available to walk
+  through any aspect of this architecture in detail during interview or technical review.
+</div>
+
+</body>
+</html>

@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Akash Ramesh: Full Stack Software Engineer</title>
+<meta name="description" content="Full Stack Software Engineer in Melbourne. Enterprise banking experience at Deloitte, real product ownership shipping a live B2B SaaS platform.">
+<meta property="og:title" content="Akash Ramesh: Full Stack Software Engineer">
+<meta property="og:description" content="Enterprise banking experience at Deloitte, real product ownership shipping a live B2B SaaS platform. Based in Melbourne. Open to junior and graduate engineering roles.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://akashramesh.dev/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #3D0C15;
+    --bg-raised: #4E1622;
+    --text: #F8F4CB;
+    --text-muted: #C6A59B;
+    --border: #5E2836;
+    --accent: #E5C55D;
+    --accent-warm: #E5C55D;
+    --accent-dim: #7A5A2A;
+    --rust: #602053;
+    --signal: #ACB41C;
+    --font-display: 'Space Grotesk', system-ui, sans-serif;
+    --font-body: 'IBM Plex Sans', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #3D0C15; --bg-raised: #4E1622; --text: #F8F4CB;
+      --text-muted: #C6A59B; --border: #5E2836; --accent: #E5C55D; --accent-dim: #7A5A2A;
+    }
+  }
+  /* Site is designed dark-first as a deliberate choice */
+  :root[data-theme="light"] {
+    --bg: #F8F4CB; --bg-raised: #FFFDF2; --text: #3D0C15;
+    --text-muted: #6B4A55; --border: #DDD3B0; --accent: #8A6410; --accent-dim: #602053;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---------- progress bar ---------- */
+  .progress-bar {
+    position: fixed; top: 0; left: 0; height: 2px; width: 0%;
+    background: var(--accent); z-index: 100; transition: width 0.1s linear;
+  }
+
+  /* ---------- persistent pin bar ---------- */
+  .pin-bar {
+    position: sticky; top: 0; z-index: 90;
+    background: color-mix(in srgb, var(--bg) 90%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .pin-inner {
+    max-width: 760px; margin: 0 auto; padding: 16px 24px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .pin-id { display: flex; flex-direction: column; line-height: 1.25; }
+  .pin-id .pname { font-family: var(--font-display); font-weight: 600; font-size: 0.98rem; }
+  .pin-id .prole { font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent); }
+  .pin-inner nav { display: flex; gap: 22px; font-family: var(--font-mono); font-size: 0.82rem; }
+  .pin-inner nav a { color: var(--text-muted); text-decoration: none; position: relative; padding-bottom: 3px; }
+  .pin-inner nav a::after {
+    content: ''; position: absolute; left: 0; bottom: 0; width: 0%; height: 1px;
+    background: var(--accent); transition: width 0.2s ease;
+  }
+  .pin-inner nav a:hover::after, .pin-inner nav a.active::after { width: 100%; }
+  .pin-inner nav a.active { color: var(--accent); }
+  .nav-toggle { display: none; flex-direction: column; gap: 4px; background: none; border: none; cursor: pointer; padding: 4px; }
+  .nav-toggle span { width: 20px; height: 1.5px; background: var(--text); }
+  @media (max-width: 640px) {
+    .pin-inner nav {
+      position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; gap: 0;
+      background: var(--bg); border-bottom: 1px solid var(--border);
+      max-height: 0; overflow: hidden; transition: max-height 0.25s ease;
+    }
+    .pin-inner nav.open { max-height: 300px; }
+    .pin-inner nav a { padding: 14px 24px; border-bottom: 1px solid var(--border); }
+    .pin-inner nav a::after { display: none; }
+    .nav-toggle { display: flex; }
+    .pin-inner { position: relative; }
+  }
+
+  /* ---------- hero (covered by About as user scrolls) ---------- */
+  .hero-sticky {
+    position: sticky; top: 57px;
+    height: calc(100vh - 57px); height: calc(100svh - 57px);
+    display: flex; flex-direction: column; justify-content: center;
+    background: var(--bg); z-index: 1;
+  }
+  .hero-sticky .inner { max-width: 760px; margin: 0 auto; padding: 0 24px; width: 100%; }
+  .role { font-family: var(--font-mono); font-size: 0.85rem; color: var(--accent); margin-bottom: 14px; min-height: 1.2em; }
+  .cursor { color: var(--accent); animation: blink 1s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .cursor { animation: none; } }
+  h1.name {
+    font-family: var(--font-display); font-weight: 700; font-size: clamp(2.1rem, 6vw, 3.2rem);
+    line-height: 1.08; margin: 0 0 20px 0; letter-spacing: -0.01em;
+  }
+  .lede { font-size: 1.08rem; color: var(--text-muted); max-width: 60ch; margin: 0 0 28px 0; }
+  .contact-row { display: flex; flex-wrap: wrap; gap: 18px; font-size: 0.92rem; }
+  .contact-row a { color: var(--text); text-decoration: none; border-bottom: 1px solid var(--border); padding-bottom: 2px; }
+  .contact-row a:hover { border-color: var(--accent); color: var(--accent); }
+  .scroll-hint { margin-top: 44px; font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); }
+
+  /* ---------- about (covers hero) ---------- */
+  #about {
+    position: relative; z-index: 2;
+    background: #F8F4CB;
+    padding: 90px 0 90px;
+    border-top: 1px solid #DDD3B0;
+    border-bottom: 1px solid #DDD3B0;
+  }
+  #about p { max-width: 66ch; color: #6B4A55; }
+  #about p strong { color: #3D0C15; font-weight: 500; }
+  #about .sectitle { color: #602053; }
+  h2.sectitle { font-family: var(--font-display); font-weight: 600; font-size: 1.5rem; margin: 0 0 28px 0; }
+  .about p { max-width: 66ch; color: var(--text-muted); }
+  .about p strong { color: var(--text); font-weight: 500; }
+
+  /* ---------- what I'm looking for (slides in from left) ---------- */
+  #looking {
+    position: relative; z-index: 2;
+    background: var(--bg);
+    padding: 90px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  #looking p { max-width: 66ch; color: var(--text-muted); margin: 0; }
+  #looking p strong { color: var(--accent); font-weight: 500; }
+  .looking-cta {
+    display: inline-block; font-family: var(--font-mono); font-size: 0.85rem; color: #E5C55D;
+    border: 1px solid #E5C55D; padding: 12px 24px; text-decoration: none; background: transparent;
+    margin-top: 28px; transition: background 0.2s ease, color 0.2s ease;
+  }
+  .looking-cta:hover { background: #E5C55D; color: #3D0C15; }
+  .reveal-left { opacity: 0; transform: translateX(-60px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal-left.in { opacity: 1; transform: translateX(0); }
+  @media (prefers-reduced-motion: reduce) { .reveal-left { opacity: 1; transform: none; transition: none; } }
+
+  /* ---------- curtain transition ---------- */
+  .curtain-stage {
+    position: sticky; top: 57px;
+    height: calc(100vh - 57px); height: calc(100svh - 57px);
+    overflow: hidden; z-index: 4; background: var(--bg);
+  }
+  .curtain-panel {
+    position: absolute; top: 0; bottom: 0; width: 50%;
+    background: #F8F4CB;
+    transition: transform 1s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  .curtain-panel.left { left: 0; transform-origin: left; }
+  .curtain-panel.right { right: 0; transform-origin: right; }
+  .curtain-stage.open .curtain-panel.left { transform: scaleX(0); }
+  .curtain-stage.open .curtain-panel.right { transform: scaleX(0); }
+  .curtain-content {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: flex-start; padding-top: 48px; z-index: 2; gap: 16px;
+    pointer-events: none;
+  }
+  .curtain-heading {
+    font-family: var(--font-display); font-weight: 700; font-size: clamp(3rem, 10vw, 7rem);
+    color: #F8F4CB; letter-spacing: -0.02em; line-height: 1;
+  }
+  .curtain-scroll {
+    font-family: var(--font-mono); font-size: 0.75rem; color: #E5C55D; margin-top: 24px;
+    animation: scrollBounce 1.5s ease-in-out infinite;
+  }
+  @keyframes scrollBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(6px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .curtain-panel { transition: none; }
+    .curtain-stage.open .curtain-panel { transform: scaleX(0); }
+    .curtain-scroll { animation: none; }
+  }
+
+  /* ---------- phase two: contrast panel ---------- */
+  .phase-two {
+    position: relative; z-index: 5; padding-top: 0;
+    margin-top: calc(-0.55 * (100vh - 57px)); margin-top: calc(-0.55 * (100svh - 57px));
+    --bg: #F8F4CB; --bg-raised: #FFFDF2; --text: #3D0C15;
+    --text-muted: #6B4A55; --border: #DDD3B0; --accent: #8A6410; --accent-dim: #E8D9A8; --signal: #7A8010;
+    background: var(--bg); color: var(--text);
+  }
+  .phase-two section { padding: 80px 0; border-bottom: 1px solid var(--border); }
+  .phase-two section:last-of-type { border-bottom: none; }
+  .phase-two .sectitle { color: #602053; }
+  /* Projects sits directly behind the curtain: minimal top padding so the
+     first tile is visible almost the moment the curtain opens. */
+  #projects { padding-top: 40px; }
+
+  .projects-tiles {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
+  }
+  @media (max-width: 640px) {
+    .projects-tiles { grid-template-columns: 1fr; }
+  }
+  .project-tile {
+    border: 1px solid var(--border); padding: 22px 24px; background: var(--bg-raised);
+    display: flex; flex-direction: column;
+    transition: border-color 0.2s ease;
+  }
+  .project-tile:hover { border-color: var(--accent-dim); }
+
+  .tile-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+  .tile-header h3 { font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; margin: 0; }
+  .tile-status { font-family: var(--font-mono); font-size: 0.68rem; padding: 2px 7px; border: 1px solid; white-space: nowrap; }
+  .tile-status.live { color: var(--signal); border-color: var(--signal); }
+  .tile-status.staging { color: var(--accent); border-color: var(--accent); }
+  .tile-status.progress { color: var(--text-muted); border-color: var(--text-muted); }
+
+  .tile-summary { font-family: var(--font-body); font-size: 0.88rem; color: var(--text-muted); margin: 0 0 14px 0; }
+
+  .tile-bullets {
+    font-family: var(--font-body); font-size: 0.85rem; color: var(--text-muted);
+    padding-left: 16px; line-height: 1.6; margin: 0 0 16px 0;
+  }
+  .tile-bullets li { margin-bottom: 5px; }
+  .tile-bullets li:last-child { margin-bottom: 0; }
+
+  .tile-stack-label {
+    font-family: var(--font-mono); font-size: 0.68rem; color: var(--accent); margin-bottom: 6px;
+  }
+  .tile-stack-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tile-stack-tags span {
+    font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-muted);
+    border: 1px solid var(--border); padding: 2px 7px; background: transparent;
+  }
+
+  .tile-integrations-label {
+    font-family: var(--font-mono); font-size: 0.68rem; color: var(--accent);
+    margin-top: 12px; margin-bottom: 6px;
+  }
+  table.tile-integrations-table { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 0.68rem; }
+  table.tile-integrations-table th {
+    background: var(--bg); color: var(--accent); padding: 5px 8px;
+    border-bottom: 1px solid var(--border); text-align: left; font-weight: 500;
+  }
+  table.tile-integrations-table td {
+    color: var(--text-muted); padding: 4px 8px; border-bottom: 1px solid var(--border);
+  }
+  table.tile-integrations-table tbody tr:nth-child(odd) td { background: var(--bg-raised); }
+  table.tile-integrations-table tbody tr:nth-child(even) td { background: transparent; }
+  table.tile-integrations-table tbody tr:last-child td { border-bottom: none; }
+
+  .tile-buttons { margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn-arch, .btn-download {
+    font-family: var(--font-mono); font-size: 0.75rem; padding: 7px 14px; background: transparent;
+    text-decoration: none; display: inline-block;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+  .btn-arch { color: var(--accent); border: 1px solid var(--accent-dim); }
+  .btn-arch:hover { background: var(--accent-dim); }
+  .btn-download { color: var(--text-muted); border: 1px solid var(--border); }
+  .btn-download:hover { border-color: var(--accent); color: var(--accent); }
+
+  .contact-cta { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+  .contact-cta a {
+    font-family: var(--font-display); font-size: 1.3rem; font-weight: 500; color: var(--text);
+    text-decoration: none; border-bottom: 1px solid var(--border); padding-bottom: 2px;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+  .contact-cta a:hover { color: var(--accent); border-color: var(--accent); }
+
+  footer { padding: 32px 0 48px; color: var(--text-muted); font-size: 0.82rem; }
+
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<header class="pin-bar">
+  <div class="pin-inner">
+    <a href="#top" class="pin-id" style="text-decoration:none;">
+      <span class="pname">Akash Ramesh</span>
+      <span class="prole">Full Stack Software Engineer</span>
+    </a>
+    <nav id="mainNav">
+      <a href="#about" data-nav>About</a>
+      <a href="#looking" data-nav>Looking</a>
+      <a href="#projects" data-nav>Projects</a>
+      <a href="#contact" data-nav>Contact</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<section class="hero-sticky" id="top">
+  <div class="inner">
+    <div class="role"><span id="typedRole"></span><span class="cursor" id="typeCursor">|</span></div>
+    <h1 class="name">Akash Ramesh</h1>
+    <p class="lede">
+      RMIT Master of IT graduate with hands on enterprise experience at Deloitte, building
+      backend microservices for a global banking client. Also has real product ownership
+      experience, having delivered a live B2B SaaS platform to a paying customer.
+    </p>
+    <div class="contact-row">
+      <a href="mailto:akashramesh.official@gmail.com">akashramesh.official@gmail.com</a>
+      <a href="https://linkedin.com/in/akash-ramesh-366570175" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+    <div class="scroll-hint">scroll ↓</div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="wrap">
+    <h2 class="sectitle">About</h2>
+    <p>
+      I work across the backend with <strong>Java and Spring Boot</strong> and
+      <strong>C# and ASP.NET Core</strong>, paired with <strong>React</strong> on the frontend.
+      My experience spans the full delivery lifecycle, from designing REST APIs to deploying
+      containerised services with Kubernetes. I also set up CI/CD pipelines, always with an
+      eye on security and solid test coverage.
+    </p>
+    <p>
+      Beyond my professional role, I was Design Lead and backend engineer on a multi tenant
+      B2B SaaS capstone during my Masters. It was delivered to a real paying client. I use AI
+      assisted tools like GitHub Copilot and Claude Code to move faster, and still own the
+      architecture and code quality myself.
+    </p>
+  </div>
+</section>
+
+<section class="reveal-left" id="looking">
+  <div class="wrap">
+    <h2 class="sectitle">What I'm looking for</h2>
+    <p>
+      I am currently open to junior and graduate full stack software engineering roles in
+      <strong>Melbourne</strong>. I bring enterprise backend experience from Deloitte, real
+      product ownership from shipping a live SaaS platform to a paying client, and a long term
+      goal of growing into technical leadership and architecture. If you are hiring or know
+      someone who is, I would love to connect.
+    </p>
+    <a href="#contact" class="looking-cta">Let's connect</a>
+  </div>
+</section>
+
+<div class="curtain-stage" id="curtainStage">
+  <div class="curtain-content">
+    <div class="curtain-heading">Projects</div>
+    <div class="curtain-scroll">scroll ↓</div>
+  </div>
+  <div class="curtain-panel left"></div>
+  <div class="curtain-panel right"></div>
+</div>
+
+<div class="phase-two">
+
+  <section id="projects">
+    <div class="wrap">
+      <h2 class="sectitle">Projects</h2>
+      <div class="projects-tiles">
+
+        <div class="project-tile">
+          <div class="tile-header">
+            <h3>Search Sensei</h3>
+            <span class="tile-status live">Live</span>
+          </div>
+          <p class="tile-summary">Multi tenant SaaS portal wrapping an enterprise search API, shipped to a paying client.</p>
+          <ul class="tile-bullets">
+            <li>Stripe metered billing across three usage dimensions with idempotent usage reporting to prevent double counting</li>
+            <li>Keycloak 26 Organisations for multi tenant isolation, active_tenant claim resolved on every backend request</li>
+            <li>ASP.NET Core backend proxy pattern keeps BookStack and Zammad PATs server side, never exposed to the browser</li>
+            <li>Onboarding reduced from manual provisioning to under 5 minutes self service</li>
+            <li>Shipped v1.0.0 to a live paying client</li>
+          </ul>
+          <div class="tile-stack-label">Stack</div>
+          <div class="tile-stack-tags"><span>ASP.NET Core 8</span><span>React 18</span><span>TypeScript</span></div>
+          <div class="tile-integrations-label">Integrations</div>
+          <table class="tile-integrations-table">
+            <thead><tr><th>Service</th><th>Role</th></tr></thead>
+            <tbody>
+              <tr><td>Keycloak 26</td><td>Identity and multi tenant org management</td></tr>
+              <tr><td>Stripe</td><td>Checkout, subscriptions, metered billing</td></tr>
+              <tr><td>BookStack</td><td>Knowledge base via backend proxy</td></tr>
+              <tr><td>Zammad</td><td>Support ticketing via backend proxy</td></tr>
+              <tr><td>Azure App Service</td><td>Hosting for containerised services</td></tr>
+            </tbody>
+          </table>
+          <div class="tile-buttons">
+            <a class="btn-arch" href="projects/search-sensei.html">Architecture</a>
+            <a class="btn-download" href="projects/docs/search-sensei-scope.pdf" download>Download report</a>
+          </div>
+        </div>
+
+        <div class="project-tile">
+          <div class="tile-header">
+            <h3>Customer Income Capture Microservice</h3>
+            <span class="tile-status live">Live</span>
+          </div>
+          <p class="tile-summary">Backend microservice for direct income capture at card activation for a global banking client.</p>
+          <ul class="tile-bullets">
+            <li>Replaced a 3 to 6 month manual review process with real time income capture at the point of card activation</li>
+            <li>Reached 61% customer adoption in the initial release</li>
+            <li>Cut external data vendor costs by 20% and lifted offer conversion by 12%</li>
+            <li>Extended existing Hadoop and Hive pipelines to feed captured income data to Tableau dashboards without new tooling</li>
+            <li>Apigee gateway handled auth and rate limiting, keeping the microservice focused on business logic</li>
+          </ul>
+          <div class="tile-stack-label">Stack</div>
+          <div class="tile-stack-tags"><span>Java</span><span>Spring Boot</span><span>MongoDB</span><span>Kubernetes</span></div>
+          <div class="tile-integrations-label">Integrations</div>
+          <table class="tile-integrations-table">
+            <thead><tr><th>Service</th><th>Role</th></tr></thead>
+            <tbody>
+              <tr><td>Apigee</td><td>API gateway, auth, rate limiting</td></tr>
+              <tr><td>Jenkins</td><td>CI/CD build and deployment pipelines</td></tr>
+              <tr><td>Hadoop/Hive</td><td>Batch pipeline to enterprise datalake</td></tr>
+              <tr><td>AWS ECS</td><td>Container hosting post PCF migration</td></tr>
+              <tr><td>Tableau</td><td>Business analyst dashboards via datalake</td></tr>
+            </tbody>
+          </table>
+          <div class="tile-buttons">
+            <a class="btn-arch" href="projects/income-capture-microservice.html">Architecture</a>
+            <a class="btn-download" href="projects/docs/IncomeCapture_Scope.pdf" download>Download report</a>
+          </div>
+        </div>
+
+        <div class="project-tile">
+          <div class="tile-header">
+            <h3>Orthoneo</h3>
+            <span class="tile-status staging">Staging</span>
+          </div>
+          <p class="tile-summary">Freelance migration from a no code builder to a self hosted WordPress CMS for a healthcare practice.</p>
+          <ul class="tile-bullets">
+            <li>Full end to end ownership: DNS, hosting setup, WordPress installation, theme build, plugin development, and client handover</li>
+            <li>Custom theme and plugin set built so non technical staff can manage all content without developer involvement</li>
+            <li>Migration carried zero additional hosting cost by running WordPress on the existing VentraIP plan</li>
+            <li>Elementor page builder layer gives staff layout control within brand constraints set by the custom theme</li>
+            <li>Next phase scoped: HotDoc booking integration and Claude API powered FAQ chatbot</li>
+          </ul>
+          <div class="tile-stack-label">Stack</div>
+          <div class="tile-stack-tags"><span>WordPress</span><span>PHP</span><span>Elementor</span></div>
+          <div class="tile-integrations-label">Integrations</div>
+          <table class="tile-integrations-table">
+            <thead><tr><th>Service</th><th>Role</th></tr></thead>
+            <tbody>
+              <tr><td>VentraIP</td><td>Shared hosting, DNS, cPanel management</td></tr>
+              <tr><td>Elementor</td><td>Page builder for staff layout control</td></tr>
+              <tr><td>HotDoc</td><td>Online booking integration (planned)</td></tr>
+              <tr><td>Claude API</td><td>AI powered FAQ chatbot (planned)</td></tr>
+            </tbody>
+          </table>
+          <div class="tile-buttons">
+            <a class="btn-arch" href="projects/orthoneo.html">Architecture</a>
+            <a class="btn-download" href="projects/docs/Orthoneo_Scope.pdf" download>Download report</a>
+          </div>
+        </div>
+
+        <div class="project-tile">
+          <div class="tile-header">
+            <h3>Prosopo</h3>
+            <span class="tile-status progress">In progress</span>
+          </div>
+          <p class="tile-summary">iOS app for building and reusing AI personas as structured system prompts.</p>
+          <ul class="tile-bullets">
+            <li>Temperature computed from tone base value plus a consistency slider: final temp = base + (consistency - 0.5) x 0.4, clamped to 0 to 1</li>
+            <li>Six tone presets (Precise 0.1 to Friendly 0.6) map user intent to LLM temperature without exposing raw values</li>
+            <li>OpenAI used to generate structured JSON persona suggestions from plain language descriptions, decoded directly into the Persona model</li>
+            <li>Two tier persistence: SwiftData for local drafts, Firestore for cloud sync per authenticated user</li>
+            <li>WidgetKit extension reads favourite persona from App Group UserDefaults for instant home screen access without a network call</li>
+          </ul>
+          <div class="tile-stack-label">Stack</div>
+          <div class="tile-stack-tags"><span>Swift</span><span>SwiftUI</span><span>SwiftData</span></div>
+          <div class="tile-integrations-label">Integrations</div>
+          <table class="tile-integrations-table">
+            <thead><tr><th>Service</th><th>Role</th></tr></thead>
+            <tbody>
+              <tr><td>Firebase Auth</td><td>Sign in with Apple and Google Sign In</td></tr>
+              <tr><td>Firestore</td><td>Cloud sync for finished personas per user</td></tr>
+              <tr><td>OpenAI API</td><td>Persona suggestion and prompt generation</td></tr>
+              <tr><td>WidgetKit</td><td>Home screen widget for quick persona access</td></tr>
+              <tr><td>App Groups</td><td>Shared UserDefaults between app and widget</td></tr>
+            </tbody>
+          </table>
+          <div class="tile-buttons">
+            <a class="btn-arch" href="projects/prosopo.html">Architecture</a>
+            <a class="btn-download" href="projects/docs/Prosopo_Scope.pdf" download>Download report</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="wrap">
+      <h2 class="sectitle">Contact</h2>
+      <div class="contact-cta">
+        <a href="mailto:akashramesh.official@gmail.com">akashramesh.official@gmail.com</a>
+        <a href="https://linkedin.com/in/akash-ramesh-366570175" target="_blank" rel="noopener">linkedin.com/in/akash-ramesh</a>
+      </div>
+    </div>
+  </section>
+
+  <footer><div class="wrap">Akash Ramesh, Melbourne, Australia</div></footer>
+
+</div>
+
+<script>
+(function () {
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Typing effect */
+  var roleText = 'Full Stack Software Engineer, Melbourne, Australia';
+  var typedEl = document.getElementById('typedRole');
+  var cursorEl = document.getElementById('typeCursor');
+  if (typedEl) {
+    if (reduceMotion) {
+      typedEl.textContent = roleText;
+      if (cursorEl) cursorEl.style.display = 'none';
+    } else {
+      var i = 0;
+      (function typeChar() {
+        if (i <= roleText.length) {
+          typedEl.textContent = roleText.slice(0, i);
+          i++;
+          setTimeout(typeChar, 22);
+        } else if (cursorEl) {
+          setTimeout(function () { cursorEl.style.display = 'none'; }, 900);
+        }
+      })();
+    }
+  }
+
+  /* Mobile nav */
+  var toggle = document.getElementById('navToggle');
+  var nav = document.getElementById('mainNav');
+  if (toggle && nav) {
+    toggle.addEventListener('click', function () {
+      var open = nav.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    nav.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', function () { nav.classList.remove('open'); });
+    });
+  }
+
+  /* Scroll progress */
+  var progressBar = document.getElementById('progressBar');
+  function updateProgress() {
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    var pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+    if (progressBar) progressBar.style.width = pct + '%';
+  }
+  document.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+
+  /* Scrollspy */
+  var navSectionIds = ['about', 'looking', 'projects', 'contact'];
+  var navSections = navSectionIds.map(function (id) { return document.getElementById(id); }).filter(Boolean);
+  var navLinks = document.querySelectorAll('[data-nav]');
+  if ('IntersectionObserver' in window && navSections.length) {
+    var spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          var id = entry.target.id;
+          navLinks.forEach(function (link) {
+            link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+    navSections.forEach(function (s) { spy.observe(s); });
+  }
+
+  /* Reveal blocks that slide in from the left on scroll */
+  var revealEls = document.querySelectorAll('.reveal-left');
+  if ('IntersectionObserver' in window && revealEls.length) {
+    var revealer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          revealer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2 });
+    revealEls.forEach(function (el) { revealer.observe(el); });
+  } else {
+    revealEls.forEach(function (el) { el.classList.add('in'); });
+  }
+
+  /* Curtain open */
+  var curtainStage = document.getElementById('curtainStage');
+  if (curtainStage && 'IntersectionObserver' in window) {
+    var curtainObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          curtainStage.classList.add('open');
+        }
+      });
+    }, { threshold: 0.5 });
+    curtainObs.observe(curtainStage);
+  } else if (curtainStage) {
+    curtainStage.classList.add('open');
+  }
+})();
+</script>
+
+</body>
+</html>

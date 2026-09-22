@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>OG Image</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=IBM+Plex+Sans:wght@400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 1200px;
+    height: 630px;
+    background: #3D0C15;
+    overflow: hidden;
+  }
+  .card {
+    position: relative;
+    width: 1200px;
+    height: 630px;
+  }
+  .rule {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1040px;
+    height: 3px;
+    background: #E5C55D;
+  }
+  .rule-top { top: 80px; }
+  .rule-bottom { bottom: 80px; }
+  .name {
+    position: absolute;
+    left: 80px;
+    top: 180px;
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 72px;
+    color: #F8F4CB;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .role {
+    position: absolute;
+    left: 80px;
+    top: 270px;
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    font-size: 36px;
+    color: #C6A59B;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .tags {
+    position: absolute;
+    left: 80px;
+    top: 340px;
+    display: flex;
+    gap: 16px;
+  }
+  .tags span {
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-size: 22px;
+    color: #E5C55D;
+    border: 1px solid #E5C55D;
+    padding: 8px;
+    white-space: nowrap;
+    line-height: 1;
+  }
+  .domain {
+    position: absolute;
+    right: 80px;
+    bottom: 32px;
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-size: 20px;
+    color: #C6A59B;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="rule rule-top"></div>
+  <div class="name">Akash Ramesh</div>
+  <div class="role">Full Stack Software Engineer</div>
+  <div class="tags">
+    <span>Java / Spring Boot</span>
+    <span>ASP.NET Core / React</span>
+    <span>Melbourne, AU</span>
+  </div>
+  <div class="rule rule-bottom"></div>
+  <div class="domain">akashramesh.dev</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Prosopo Scope</title>
+<style>
+  @page { size: letter; margin: 0.85in 0.8in; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; color: #2A2A2A; font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+    font-size: 10.3pt; line-height: 1.55;
+  }
+  .doc-label {
+    font-size: 8.5pt; letter-spacing: 0.09em; text-transform: uppercase; color: #8C8C8C;
+    margin-bottom: 8px;
+  }
+  h1.doc-title { font-size: 21pt; color: #602053; margin: 0 0 16px 0; font-weight: 700; line-height: 1.25; }
+  hr.doc-rule { border: none; border-top: 2px solid #E5C55D; margin: 0 0 20px 0; }
+
+  .meta { margin-bottom: 28px; }
+  .meta-row { display: flex; gap: 10px; font-size: 9.7pt; margin-bottom: 5px; }
+  .meta-label {
+    width: 88px; flex: 0 0 88px; color: #8C8C8C; text-transform: uppercase;
+    letter-spacing: 0.05em; font-size: 8.3pt; padding-top: 2px;
+  }
+  .meta-value { color: #2A2A2A; }
+  .meta-value strong { font-weight: 700; }
+
+  h2.doc-h2 {
+    font-size: 13.5pt; color: #602053; margin: 26px 0 12px 0; font-weight: 700;
+    border-bottom: 1px solid #DDD3B0; padding-bottom: 7px; page-break-after: avoid;
+  }
+  h2.doc-h2:first-of-type { margin-top: 0; }
+  h3.doc-h3 { font-size: 11pt; color: #602053; margin: 16px 0 6px 0; font-weight: 700; page-break-after: avoid; }
+  p { margin: 0 0 10px 0; }
+  ul { margin: 0 0 12px 0; padding-left: 20px; }
+  li { margin-bottom: 6px; }
+
+  table.doc-table { width: 100%; border-collapse: collapse; margin: 8px 0 16px 0; font-size: 9.3pt; }
+  table.doc-table th {
+    background: #602053; color: #F8F4CB; text-align: left; padding: 8px 10px; font-weight: 600;
+  }
+  table.doc-table td { padding: 8px 10px; border-bottom: 1px solid #DDD3B0; vertical-align: top; }
+  table.doc-table tbody tr:nth-child(even) td { background: #FAF7E8; }
+
+  .gold-block {
+    background: #F8F4CB; border-left: 4px solid #E5C55D; padding: 14px 18px; margin: 10px 0 16px 0;
+  }
+  .gold-block ul { margin: 0; padding-left: 20px; }
+  .gold-block li { margin-bottom: 8px; }
+  .gold-block li:last-child { margin-bottom: 0; }
+
+  .doc-footer {
+    margin-top: 34px; padding-top: 14px; border-top: 1px solid #DDD3B0;
+    font-size: 9pt; color: #7A7A7A; font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<div class="doc-label">Project Scope Document</div>
+<h1 class="doc-title">Prosopo: AI Persona Manager</h1>
+<hr class="doc-rule">
+
+<div class="meta">
+  <div class="meta-row"><div class="meta-label">Built for</div><div class="meta-value"><strong>RMIT iOS App Development coursework, built individually as a solo project</strong></div></div>
+  <div class="meta-row"><div class="meta-label">Status</div><div class="meta-value">Core app shipped, widget in progress</div></div>
+  <div class="meta-row"><div class="meta-label">Stack</div><div class="meta-value">Swift, SwiftUI, MVVM, SwiftData, Firebase Auth, Firestore, OpenAI API, WidgetKit, App Groups</div></div>
+  <div class="meta-row"><div class="meta-label">Source</div><div class="meta-value">Personal project, available to walk through on request</div></div>
+</div>
+
+<h2 class="doc-h2">1. Overview</h2>
+<p>
+  Prosopo lets users define reusable AI personas, a name, role, tone, and guardrails, and turns
+  them into clean, consistent system prompts they can drop into ChatGPT, Claude, Gemini, or any
+  other AI assistant. Rather than rewriting the same instructions every time, users build a small
+  library of personas and reuse them across conversations.
+</p>
+<p>
+  The app is built entirely solo in SwiftUI using MVVM architecture, with two tier local and
+  cloud persistence, Firebase Auth for sign in, and a WidgetKit home screen widget for quick
+  access to favourite personas. It was built as an individual project for RMIT iOS App
+  Development coursework.
+</p>
+
+<h2 class="doc-h2">2. Problem Statement</h2>
+<p>
+  Anyone who uses AI assistants regularly runs into the same friction: rewriting the same system
+  prompt from scratch every time they want a consistent persona, whether that is a blunt editor,
+  a patient tutor, or a terse code reviewer. Without a reusable library, that phrasing either gets
+  retyped, half remembered, or lost between sessions.
+</p>
+<p>
+  The result is inconsistent AI behaviour across sessions. The same intended persona comes out
+  slightly differently each time it is described from memory, and there is no single place to
+  refine a persona once and reuse it everywhere. Prosopo exists to give that persona definition a
+  permanent, structured home.
+</p>
+
+<h2 class="doc-h2">3. In Scope</h2>
+<ul>
+  <li>Persona CRUD: create, edit, and delete personas with name, role, tone, and guardrails</li>
+  <li>Tone and consistency controls, mapped to an underlying LLM temperature</li>
+  <li>AI assisted persona suggestion from free text, using structured JSON output from OpenAI</li>
+  <li>Firebase Auth, with Sign in with Apple and Google Sign In</li>
+  <li>Two tier persistence: SwiftData for local drafts, Firestore for synced, finished personas</li>
+  <li>WidgetKit home screen extension for quick access to favourite personas</li>
+  <li>Unit tests covering the add persona, edit persona, and home list view models</li>
+</ul>
+
+<h2 class="doc-h2">4. Out of Scope</h2>
+<ul>
+  <li>Android version</li>
+  <li>Web app</li>
+  <li>Direct LLM chat within the app: Prosopo generates prompts for use elsewhere rather than hosting conversations itself</li>
+  <li>Team or shared persona libraries</li>
+  <li>App Store distribution, pending Apple Developer Program enrolment</li>
+</ul>
+
+<h2 class="doc-h2">5. Key Architecture Decisions</h2>
+<h3 class="doc-h3">Two tier persistence: SwiftData local and Firestore cloud</h3>
+<p>
+  Drafts live locally in SwiftData so an in progress persona survives an app restart before the
+  user commits to it. Finished personas sync to Firestore, scoped per authenticated user. This
+  separation means the app is fully usable offline for persona management, and cloud sync only
+  happens on deliberate save actions.
+</p>
+<h3 class="doc-h3">Computing temperature from tone and a consistency slider</h3>
+<p>
+  Each persona has a tone, precise, supportive, constructive, concise, assertive, or friendly,
+  each mapped to a base LLM temperature from 0.1 to 0.6. Rather than exposing raw temperature to
+  the user, the UI exposes a single consistency slider from 0 to 1. The actual temperature sent
+  to OpenAI is computed as the base value plus the consistency offset from 0.5, scaled by 0.4,
+  then clamped to the 0 to 1 range. This keeps the control intuitive for non technical users
+  while still giving fine grained influence over response determinism.
+</p>
+<h3 class="doc-h3">Structured JSON output for persona suggestion</h3>
+<p>
+  One feature lets a user describe a persona in plain language and have the app fill in the form
+  fields automatically. Rather than treating this as a simple chat completion, the request
+  instructs OpenAI to return strict JSON matching the persona schema, including a closed set of
+  valid tone values, which is decoded directly into a Persona model. Malformed or out of range
+  values are caught and clamped rather than allowed to corrupt the model state.
+</p>
+<h3 class="doc-h3">App Group UserDefaults for WidgetKit favourites</h3>
+<p>
+  Favourites are stored in shared App Group UserDefaults specifically so the WidgetKit extension
+  can read them without a network round trip. A widget that required a network call on every
+  timeline reload would be slow and battery inefficient. App Group storage gives the widget
+  instant read access to the same data the main app writes.
+</p>
+<h3 class="doc-h3">Gesture disambiguation on persona tiles</h3>
+<p>
+  Persona tiles support four interactions on the same tap target: single tap to view, double tap
+  to edit, triple tap to delete with confirmation, and long press for a quick action menu. The
+  implementation debounces the single tap behind a cancellable DispatchWorkItem and uses
+  simultaneousGesture for the long press, so a double or triple tap cancels the pending single
+  tap action before it fires instead of running both handlers.
+</p>
+
+<h2 class="doc-h2">6. Outcomes</h2>
+<div class="gold-block">
+  <ul>
+    <li>Core app shipped and fully functional: persona creation, editing, deletion, tone and consistency controls, structured AI suggestion, Firebase Auth with Sign in with Apple and Google Sign In</li>
+    <li>Two tier persistence working: SwiftData local drafts and Firestore cloud sync per user</li>
+    <li>WidgetKit extension built and working in local testing: reads favourite persona from App Group, copies prompt to clipboard via a prosopo:// deep link, timeline reloads on save</li>
+    <li>Full App Group entitlements blocked on Apple Developer Program enrolment, not available during coursework, so widget distribution is not yet complete</li>
+    <li>Unit tests covering add persona, edit persona, and home list view models</li>
+  </ul>
+</div>
+
+<h2 class="doc-h2">7. Integration Footprint</h2>
+<table class="doc-table">
+  <thead><tr><th>Service</th><th>Role</th><th>Auth method</th></tr></thead>
+  <tbody>
+    <tr><td>Firebase Auth</td><td>Sign in with Apple and Google Sign In</td><td>Apple nonce + SHA256, Google Sign In SDK</td></tr>
+    <tr><td>Firestore</td><td>Cloud persistence for finished personas per user</td><td>Firebase Auth UID scoping</td></tr>
+    <tr><td>OpenAI API</td><td>Persona suggestion (structured JSON) and prompt generation</td><td>API key, server side in production</td></tr>
+    <tr><td>SwiftData</td><td>Local persistence for drafts</td><td>No external auth, on device only</td></tr>
+    <tr><td>WidgetKit</td><td>Home screen widget for quick persona access</td><td>App Group entitlement</td></tr>
+    <tr><td>App Groups</td><td>Shared UserDefaults between main app and widget</td><td>Provisioning profile entitlement</td></tr>
+  </tbody>
+</table>
+
+<h2 class="doc-h2">8. My Role</h2>
+<p>Sole developer on this project, covering:</p>
+<ul>
+  <li>Overall architecture and MVVM structure</li>
+  <li>SwiftUI implementation for every screen and interaction</li>
+  <li>Firebase integration, including Sign in with Apple, Google Sign In, and Firestore</li>
+  <li>OpenAI integration for persona suggestion and prompt generation</li>
+  <li>SwiftData and Firestore persistence design</li>
+  <li>WidgetKit extension</li>
+  <li>Unit tests</li>
+</ul>
+
+<h2 class="doc-h2">9. What is Next</h2>
+<p>
+  Apple Developer Program enrolment is the next concrete step. It unlocks the full App Group
+  entitlements the WidgetKit extension needs for distribution, and is a prerequisite for App
+  Store submission. Once that is in place, the remaining widget work can be completed and the app
+  can move toward a public release. Longer term, an Android or web version is a possible
+  expansion, once the core experience is proven on iOS.
+</p>
+
+<div class="doc-footer">
+  Personal project, available to walk through on request. Akash Ramesh is available to walk
+  through implementation in detail during any interview or technical review.
+</div>
+
+</body>
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Income Capture Architecture</title>
+<style>
+  @page { size: letter; margin: 0.85in 0.8in; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; color: #2A2A2A; font-family: -apple-system, "Helvetica Neue", Arial, sans-serif;
+    font-size: 10.3pt; line-height: 1.55;
+  }
+  .doc-label {
+    font-size: 8.5pt; letter-spacing: 0.09em; text-transform: uppercase; color: #8C8C8C;
+    margin-bottom: 8px;
+  }
+  h1.doc-title { font-size: 21pt; color: #602053; margin: 0 0 16px 0; font-weight: 700; line-height: 1.25; }
+  hr.doc-rule { border: none; border-top: 2px solid #E5C55D; margin: 0 0 20px 0; }
+
+  .meta { margin-bottom: 28px; }
+  .meta-row { display: flex; gap: 10px; font-size: 9.7pt; margin-bottom: 5px; }
+  .meta-label {
+    width: 88px; flex: 0 0 88px; color: #8C8C8C; text-transform: uppercase;
+    letter-spacing: 0.05em; font-size: 8.3pt; padding-top: 2px;
+  }
+  .meta-value { color: #2A2A2A; }
+  .meta-value strong { font-weight: 700; }
+
+  h2.doc-h2 {
+    font-size: 13.5pt; color: #602053; margin: 26px 0 12px 0; font-weight: 700;
+    border-bottom: 1px solid #DDD3B0; padding-bottom: 7px; page-break-after: avoid;
+  }
+  h2.doc-h2:first-of-type { margin-top: 0; }
+  h3.doc-h3 { font-size: 11pt; color: #602053; margin: 16px 0 6px 0; font-weight: 700; page-break-after: avoid; }
+  p { margin: 0 0 10px 0; }
+  ul { margin: 0 0 12px 0; padding-left: 20px; }
+  li { margin-bottom: 6px; }
+
+  table.doc-table { width: 100%; border-collapse: collapse; margin: 8px 0 16px 0; font-size: 9.3pt; }
+  table.doc-table th {
+    background: #602053; color: #F8F4CB; text-align: left; padding: 8px 10px; font-weight: 600;
+  }
+  table.doc-table td { padding: 8px 10px; border-bottom: 1px solid #DDD3B0; vertical-align: top; }
+  table.doc-table tbody tr:nth-child(even) td { background: #FAF7E8; }
+
+  .gold-block {
+    background: #F8F4CB; border-left: 4px solid #E5C55D; padding: 14px 18px; margin: 10px 0 16px 0;
+  }
+  .gold-block p { margin: 0 0 8px 0; }
+  .gold-block p:last-child { margin-bottom: 0; }
+
+  .code-block {
+    background: #3D0C15; color: #F8F4CB; border-left: 4px solid #E5C55D; padding: 14px 18px;
+    font-family: "Courier New", monospace; font-size: 8.8pt; white-space: pre; line-height: 1.65;
+    margin: 10px 0 18px 0; page-break-inside: avoid;
+  }
+
+  .doc-footer {
+    margin-top: 34px; padding-top: 14px; border-top: 1px solid #DDD3B0;
+    font-size: 9pt; color: #7A7A7A; font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<div class="doc-label">Architecture Document</div>
+<h1 class="doc-title">Customer Income Capture Microservice</h1>
+<hr class="doc-rule">
+
+<div class="meta">
+  <div class="meta-row"><div class="meta-label">Client</div><div class="meta-value"><strong>Enterprise banking client</strong></div></div>
+  <div class="meta-row"><div class="meta-label">Stack</div><div class="meta-value">Java, Spring Boot, MongoDB, Apigee, Jenkins CI/CD, Hadoop/Hive, SQL, Kubernetes, PCF, AWS ECS, Lambda</div></div>
+  <div class="meta-row"><div class="meta-label">Author</div><div class="meta-value">Akash Ramesh</div></div>
+  <div class="meta-row"><div class="meta-label">Status</div><div class="meta-value">Live, in production for an enterprise banking client</div></div>
+</div>
+
+<h2 class="doc-h2">1. System Overview</h2>
+<p>
+  This service extends the client's core banking application to capture customer declared
+  income directly at the point of credit card activation. Previously, income data came from
+  credit application forms, often 3 months or more out of date, or from third party income
+  surveys that could take up to 6 months to return results. Adding a direct, first party data
+  entry point at the moment of activation closes that gap.
+</p>
+<p>
+  All external traffic reaches the service through the Apigee gateway. Apigee handles
+  authentication, rate limiting, and routing before any request reaches the Spring Boot
+  application, which keeps the service itself focused on business logic.
+</p>
+
+<h2 class="doc-h2">2. High Level Architecture</h2>
+<h3 class="doc-h3">Component map</h3>
+<p>The system is composed of six layers, each with a distinct responsibility:</p>
+<table class="doc-table">
+  <thead><tr><th>Layer</th><th>Component</th><th>Responsibility</th></tr></thead>
+  <tbody>
+    <tr><td>Client</td><td>Card activation flow</td><td>Customer declares income during activation</td></tr>
+    <tr><td>Gateway</td><td>Apigee</td><td>Authentication, rate limiting, routing</td></tr>
+    <tr><td>Application</td><td>Spring Boot Service</td><td>Business logic, income capture and validation</td></tr>
+    <tr><td>Data</td><td>MongoDB</td><td>Transactional store for captured income</td></tr>
+    <tr><td>Batch</td><td>Hadoop/Hive Pipeline</td><td>Extended SQL queries feeding the enterprise datalake</td></tr>
+    <tr><td>Analytics</td><td>Tableau</td><td>Business analyst dashboards over datalake data</td></tr>
+  </tbody>
+</table>
+
+<h3 class="doc-h3">Request flow</h3>
+<p>
+  The customer facing hop goes through Apigee only. Everything downstream of that, the
+  database write and the batch pipeline, is internal to the backend and never reachable
+  directly from the customer.
+</p>
+<div class="code-block">Customer
+ |
+ |-- Declares income at activation --> Apigee Gateway
+ |&lt;-- Activation confirmed --------------|
+ |
+ |-- Authenticated request ------------> Spring Boot Service
+                    |
+                    |-- Write income event ------> MongoDB
+                    |-- Extended batch SQL ------> Hadoop/Hive Pipeline
+
+Hadoop/Hive Pipeline
+ |-- Load into datalake --> Enterprise Datalake
+                    |
+                    |-- Read --> Offer Targeting System
+                    |-- Read --> Tableau</div>
+
+<h2 class="doc-h2">3. Income Capture Flow</h2>
+<ul>
+  <li>Customer declares income during credit card activation, using the new capture step added to the existing activation flow</li>
+  <li>The declaration request reaches the Apigee gateway first</li>
+  <li>Apigee authenticates the request, applies rate limiting, and routes it to the Spring Boot service</li>
+  <li>The Spring Boot service validates the income fields for the customer's employment type and writes the event to MongoDB</li>
+  <li>On the next batch run, the extended Hadoop/Hive pipeline picks up the new income records through the extended SQL queries</li>
+  <li>The pipeline loads the data into the existing enterprise datalake</li>
+  <li>From the datalake, the data reaches both the offer targeting system and the business analyst Tableau dashboards</li>
+</ul>
+
+<h2 class="doc-h2">4. Apigee Gateway Design</h2>
+<p>
+  Authentication, rate limiting, and routing are all handled at the Apigee gateway layer, ahead
+  of the Spring Boot service. Every request is authenticated and checked against rate limits
+  before it is routed to the application.
+</p>
+<p>
+  This was a deliberate choice over building the same checks into the service itself. Keeping
+  security policy at the gateway meant the microservice stayed focused on business logic, and
+  meant policy changes, such as a new rate limit or an updated auth rule, could be applied at
+  the gateway without a service redeployment.
+</p>
+
+<h2 class="doc-h2">5. Data Model</h2>
+<p>
+  Income data at card activation is document shaped, not relational. Each activation event has
+  a variable set of income fields depending on the customer's employment type, so MongoDB was
+  chosen as the transactional store rather than a relational database.
+</p>
+<p>
+  For example, income document structure can vary by employment type: a salaried customer's
+  record centers on employer and base salary fields, while a self employed customer's record
+  instead centers on declared business revenue. This variability is what a fixed relational
+  schema would struggle to accommodate without frequent migrations. MongoDB absorbs it directly,
+  without a schema migration for each new income type the business wants to capture.
+</p>
+
+<h2 class="doc-h2">6. Pipeline Extension</h2>
+<p>
+  Rather than build a parallel data pipeline for the new income data, the existing Hadoop/Hive
+  batch pipeline was extended with new SQL queries. The extension reads the new MongoDB income
+  collection and maps the relevant fields into the pipeline's existing table structures in Hive.
+</p>
+<p>
+  This kept the income data flowing through the same batch cadence and into the same enterprise
+  datalake the business already relied on, with no separate pipeline to build, monitor, or hand
+  off to a different team. The same existing Tableau dashboards picked up the new data without
+  analyst retraining.
+</p>
+
+<h2 class="doc-h2">7. CI/CD Pipeline</h2>
+<p>
+  The service was built and deployed through a Jenkins CI/CD pipeline, automating build and
+  deployment on every merge.
+</p>
+<p>
+  The team's infrastructure migrated from Pivotal Cloud Foundry to a combination of Kubernetes
+  for container orchestration and AWS ECS and Lambda for scalable workload hosting. The Jenkins
+  pipeline was updated as part of this migration so builds continued to deploy automatically to
+  the new targets.
+</p>
+
+<h2 class="doc-h2">8. Security Design</h2>
+<table class="doc-table">
+  <thead><tr><th>Concern</th><th>Approach</th><th>Where enforced</th></tr></thead>
+  <tbody>
+    <tr><td>Authentication</td><td>Apigee API key and OAuth policies</td><td>Apigee gateway</td></tr>
+    <tr><td>Rate limiting</td><td>Apigee rate limiting policies</td><td>Apigee gateway</td></tr>
+    <tr><td>Routing</td><td>Apigee routing rules to the Spring Boot service</td><td>Apigee gateway</td></tr>
+    <tr><td>Data storage</td><td>Income data held in MongoDB with internal service credentials</td><td>MongoDB</td></tr>
+    <tr><td>Pipeline access</td><td>Hadoop/Hive pipeline and datalake access restricted to internal service credentials</td><td>Hadoop/Hive, enterprise datalake</td></tr>
+    <tr><td>Deployment access</td><td>AWS IAM roles for ECS and Lambda workloads</td><td>AWS</td></tr>
+  </tbody>
+</table>
+
+<h2 class="doc-h2">9. My Contributions</h2>
+<p>Within the engagement team, my specific ownership:</p>
+<ul>
+  <li>Designed and implemented the Spring Boot microservice, including the income capture endpoint and MongoDB persistence layer</li>
+  <li>Configured Apigee gateway policies for authentication, rate limiting, and routing</li>
+  <li>Extended the Hadoop/Hive batch pipeline with new SQL queries to bring captured income data into the enterprise datalake</li>
+  <li>Built the Jenkins CI/CD pipeline and carried it through the migration from Pivotal Cloud Foundry to Kubernetes and AWS</li>
+  <li>Led code reviews for the service</li>
+  <li>Ran stakeholder calls with client side leads</li>
+</ul>
+
+<div class="doc-footer">
+  Source code is in a private client repository. Akash Ramesh is available to walk through any
+  aspect of this architecture in detail during interview or technical review.
+</div>
+
+</body>
+</html>
